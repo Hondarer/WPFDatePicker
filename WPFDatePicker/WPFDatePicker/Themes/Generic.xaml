@@ -19,11 +19,15 @@
                         <StackPanel Orientation="Horizontal" Height="24">
                             <TextBox x:Name="PART_dateTextBox" Width="200" Text="{Binding SelectedDate}" />
                             
-                            <!-- TODO -->
-                            <Button Content="Popup" />
+                            <!-- TODO: -->
+                            <Button x:Name="PART_popupButton" Content="Popup" />
                             <TextBlock />
+
+                            <Popup x:Name="PART_popup" PlacementTarget="{Binding ElementName=PART_popupButton}" StaysOpen="False" Width="200">
+                            </Popup>
                             
                         </StackPanel>
+                        
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

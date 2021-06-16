@@ -21,12 +21,17 @@ namespace WPFDatePicker.ViewModels
                 string targetValue = Regex.Replace(value, @"\(.*\)", string.Empty);
 
                 // 日付として評価する
+                // TODO: yyyy/mm/dd, yyyymmdd, yy/mm/dd, yymmdd, mmddなど、きちんと順序だてて評価したほうがいい
+
                 //if (!DateTime.TryParseExact(targetValue, "y/M/d", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime parsedDateTime))
                 if (!DateTime.TryParse(targetValue, out DateTime parsedDateTime)) // 現在のカルチャで解釈可能なら良いとする
                 {
                     OnPropertyChanged();
                     return;
                 }
+
+                // 日付以下の情報があれば削除する
+                _selectedDate = _selectedDate.Date;
 
                 // TODO: 選択可能な範囲になければクリップ
 
