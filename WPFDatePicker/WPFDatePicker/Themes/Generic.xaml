@@ -1,0 +1,33 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:view="clr-namespace:WPFDatePicker.Views"
+    xmlns:vm="clr-namespace:WPFDatePicker.ViewModels">
+
+    <Style TargetType="{x:Type view:LastAndThisMonthDatePicker}">
+        <Setter Property="DataContext">
+            <Setter.Value>
+                <vm:LastAndThisMonthDatePickerViewModel />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type view:LastAndThisMonthDatePicker}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <StackPanel Orientation="Horizontal" Height="24">
+                            <TextBox x:Name="PART_dateTextBox" Width="200" Text="{Binding SelectedDate}" />
+                            
+                            <!-- TODO -->
+                            <Button Content="Popup" />
+                            <TextBlock />
+                            
+                        </StackPanel>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+</ResourceDictionary>
