@@ -1,4 +1,6 @@
-﻿using System;
+﻿// https://stackoverflow.com/questions/942548/setting-a-property-with-an-eventtrigger
+
+using System;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows;

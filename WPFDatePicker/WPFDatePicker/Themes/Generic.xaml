@@ -21,18 +21,62 @@
                         <StackPanel Orientation="Horizontal" Height="24">
                             <TextBox x:Name="PART_dateTextBox" Width="200" Text="{Binding SelectedDate}" />
                             
-                            <!-- TODO: -->
                             <Button x:Name="PART_popupButton" Content="Popup">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Click">
-                                        <action:SetProperty PropertyName="IsOpen" TargetObject="{Binding ElementName=PART_popup}" Value="True" />
+                                        <action:SetProperty PropertyName="IsOpen" Value="True" TargetObject="{Binding ElementName=PART_popup}" />
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                             </Button>
                             <TextBlock />
 
-                            <Popup x:Name="PART_popup" PlacementTarget="{Binding ElementName=PART_popupButton}" StaysOpen="False" Width="200" Height="100">
-                                <Border Background="Tomato">
+                            <!-- TODO: focus on popup -->
+                            <Popup x:Name="PART_popup" PlacementTarget="{Binding ElementName=PART_popupButton}" StaysOpen="False">
+                                <Popup.Resources>
+                                    <DataTemplate x:Key="PickButtonTemplate">
+                                        <Button HorizontalContentAlignment="Right"
+                                                Command="{Binding DataContext.SpecifyDateCommamnd, RelativeSource={RelativeSource FindAncestor, AncestorType=Popup}}"
+                                                CommandParameter="{Binding SpecifyDate}">
+                                            <TextBlock Text="{Binding SpecifyDate, StringFormat={}{0:%d}}" />
+                                        </Button>
+                                    </DataTemplate>
+                                </Popup.Resources>
+                                <Border Background="#C0C0C0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*" />
+                                            <ColumnDefinition Width="1*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="Last month" TextAlignment="Center" HorizontalAlignment="Stretch" />
+                                            <ItemsControl ItemsSource="{Binding LastMonthDays}"
+                                                          ItemTemplate="{StaticResource PickButtonTemplate}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <UniformGrid Columns="7" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="This month" TextAlignment="Center" HorizontalAlignment="Stretch" />
+                                            <ItemsControl ItemsSource="{Binding ThisMonthDays}"
+                                                          ItemTemplate="{StaticResource PickButtonTemplate}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <UniformGrid Columns="7" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <Button Content="Tomorrow" Command="{Binding SpecifyDateCommamnd}" CommandParameter="1" />
+                                            <Button Content="Today" Command="{Binding SpecifyDateCommamnd}" />
+                                            <Button Content="Yesterday" Command="{Binding SpecifyDateCommamnd}" CommandParameter="-1" />
+                                            <Button Content="This day last week" Command="{Binding SpecifyDateCommamnd}" CommandParameter="-7" />
+                                        </StackPanel>
+                                    </Grid>
                                 </Border>
                             </Popup>
                             
