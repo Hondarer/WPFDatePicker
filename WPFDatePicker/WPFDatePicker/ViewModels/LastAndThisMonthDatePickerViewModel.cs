@@ -10,10 +10,120 @@ namespace WPFDatePicker.ViewModels
         public class DateViewModel : BindableBase
         {
             public DateTime? SpecifyDate { get; set; }
+
+            public bool CanPick { get; set; } = true;
         }
 
-        // 今日の概念が変わる可能性があるためフィールドで持っておく
         private DateTime _today = DateTime.Today;
+
+        public DateTime Today
+        {
+            get
+            {
+                return _today;
+            }
+            private set
+            {
+                SetProperty(ref _today, value);
+            }
+        }
+
+        /// <summary>
+        /// 本日を判断する時刻のオフセットを保持します。
+        /// </summary>
+        private TimeSpan? _todayOffset;
+
+        /// <summary>
+        /// 本日を判断する時刻のオフセットを取得または設定します。
+        /// </summary>
+        public TimeSpan? TodayOffset
+        {
+            get
+            {
+                return _todayOffset;
+            }
+            set
+            {
+                if (SetProperty(ref _todayOffset, value) == true)
+                {
+                    if (_todayOffset == null)
+                    {
+                        Today = DateTime.Today;
+                    }
+
+                    Today = DateTime.Today.AddTicks(((TimeSpan)TodayOffset).Ticks).Date;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 選択可能範囲の開始日のオフセットを保持します。
+        /// </summary>
+        private int _startDateOffset;
+
+        /// <summary>
+        /// 選択可能範囲の開始日のオフセットを取得または設定します。
+        /// </summary>
+        public int StartDateOffset
+        {
+            get
+            {
+                return _startDateOffset;
+            }
+            set
+            {
+                SetProperty(ref _startDateOffset, value);
+            }
+        }
+
+        /// <summary>
+        /// 選択可能範囲の終了日のオフセットを保持します。
+        /// </summary>
+        private int _endDateOffset;
+
+        /// <summary>
+        /// 選択可能範囲の開始日のオフセットを取得または設定します。
+        /// </summary>
+        public int EndDateOffset
+        {
+            get
+            {
+                return _endDateOffset;
+            }
+            set
+            {
+                SetProperty(ref _endDateOffset, value);
+            }
+        }
+
+        private string _thisMonthHeader;
+
+        public string ThisMonthHeader
+        {
+            get
+            {
+                return _thisMonthHeader;
+            }
+            private set
+            {
+                SetProperty(ref _thisMonthHeader, value);
+            }
+        }
+
+
+        private string _lastMonthHeader;
+
+        public string LastMonthHeader
+        {
+            get
+            {
+                return _lastMonthHeader;
+            }
+            private set
+            {
+                SetProperty(ref _lastMonthHeader, value);
+            }
+        }
 
         private DateTime _selectedDate;
 
@@ -21,7 +131,7 @@ namespace WPFDatePicker.ViewModels
         {
             get
             {
-                return string.Format("{0:yyyy/MM/dd(ddd)}",_selectedDate);
+                return string.Format("{0:yyyy/MM/dd(ddd)}", _selectedDate);
             }
             set
             {
@@ -51,7 +161,7 @@ namespace WPFDatePicker.ViewModels
 
             // TODO: 選択可能な範囲になければクリップ
 
-            if(_selectedDate != specifyDate)
+            if (_selectedDate != specifyDate)
             {
                 _selectedDate = specifyDate;
                 OnPropertyChanged(nameof(SelectedDate));
@@ -114,11 +224,12 @@ namespace WPFDatePicker.ViewModels
                            // NOP
                        }
                    }
-                   ChangeDateCore(_today.AddDays(offsetDay));
+                   ChangeDateCore(Today.AddDays(offsetDay));
                },
                parameter =>
                {
-                   return null;
+                   // TODO: 実行不可判定
+                   return true;
                });
 
             RefreshDatesViewModel();
@@ -133,14 +244,17 @@ namespace WPFDatePicker.ViewModels
             {
                 // TODO: 下記はレイアウトテスト用で、設定しているDateTimeは現段階ででたらめ
                 //       _today をもとに、カレンダーを生成する
-                _lastMonthDays.Add(new DateViewModel() { SpecifyDate = _today.AddDays(dayIndex) });
-                _thisMonthDays.Add(new DateViewModel() { SpecifyDate = _today.AddDays(dayIndex) });
+                _lastMonthDays.Add(new DateViewModel() { SpecifyDate = Today.AddDays(dayIndex) });
+                _thisMonthDays.Add(new DateViewModel() { SpecifyDate = Today.AddDays(dayIndex) });
             }
 
             LastMonthDays = _lastMonthDays;
             ThisMonthDays = _thisMonthDays;
 
-            _selectedDate = _today;
+            ThisMonthHeader = "This month";
+            LastMonthHeader = "Last month";
+
+            _selectedDate = Today;
         }
     }
 }

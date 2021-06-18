@@ -4,9 +4,15 @@
     xmlns:view="clr-namespace:WPFDatePicker.Views"
     xmlns:action="clr-namespace:WPFDatePicker.Mvvm.Actions"
     xmlns:vm="clr-namespace:WPFDatePicker.ViewModels"
+    xmlns:conv="clr-namespace:WPFDatePicker.Converters"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
 
+    <conv:NullToVisibilityCollapsedConverter x:Key="NullToVisibilityCollapsedConverter" />
+
     <Style TargetType="{x:Type view:LastAndThisMonthDatePicker}">
+        <Setter Property="TodayOffset" Value="{Binding TodayOffset, Mode=OneWayToSource}" />
+        <Setter Property="StartDateOffset" Value="{Binding StartDateOffset, Mode=OneWayToSource}" />
+        <Setter Property="EndDateOffset" Value="{Binding EndDateOffset, Mode=OneWayToSource}" />
         <Setter Property="DataContext">
             <Setter.Value>
                 <vm:LastAndThisMonthDatePickerViewModel />
@@ -35,6 +41,8 @@
                                 <Popup.Resources>
                                     <DataTemplate x:Key="PickButtonTemplate">
                                         <Button HorizontalContentAlignment="Right"
+                                                Visibility="{Binding Converter={StaticResource NullToVisibilityCollapsedConverter}}"
+                                                IsEnabled="{Binding CanPick}"
                                                 Command="{Binding DataContext.SpecifyDateCommamnd, RelativeSource={RelativeSource FindAncestor, AncestorType=Popup}}"
                                                 CommandParameter="{Binding SpecifyDate}">
                                             <TextBlock Text="{Binding SpecifyDate, StringFormat={}{0:%d}}" />
@@ -49,7 +57,7 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel>
-                                            <TextBlock Text="Last month" TextAlignment="Center" HorizontalAlignment="Stretch" />
+                                            <TextBlock Text="{Binding LastMonthHeader}" TextAlignment="Center" HorizontalAlignment="Stretch" />
                                             <ItemsControl ItemsSource="{Binding LastMonthDays}"
                                                           ItemTemplate="{StaticResource PickButtonTemplate}">
                                                 <ItemsControl.ItemsPanel>
@@ -60,7 +68,7 @@
                                             </ItemsControl>
                                         </StackPanel>
                                         <StackPanel Grid.Column="1">
-                                            <TextBlock Text="This month" TextAlignment="Center" HorizontalAlignment="Stretch" />
+                                            <TextBlock Text="{Binding ThisMonthHeader}" TextAlignment="Center" HorizontalAlignment="Stretch" />
                                             <ItemsControl ItemsSource="{Binding ThisMonthDays}"
                                                           ItemTemplate="{StaticResource PickButtonTemplate}">
                                                 <ItemsControl.ItemsPanel>

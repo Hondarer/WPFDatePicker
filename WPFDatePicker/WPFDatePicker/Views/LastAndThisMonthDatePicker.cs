@@ -3,6 +3,7 @@
 // TextBox.SelectionStart
 // TextBox.SelectionLength
 
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -16,6 +17,69 @@ namespace WPFDatePicker.Views
     [TemplatePart(Name = "PART_dateTextBox", Type = typeof(TextBox))]
     public class LastAndThisMonthDatePicker : Control
     {
+        /// <summary>
+        /// TodayOffset 依存関係プロパティを識別します。このフィールドは読み取り専用です。
+        /// </summary>
+        public static readonly DependencyProperty TodayOffsetProperty =
+            DependencyProperty.Register(nameof(TodayOffset), typeof(TimeSpan?), typeof(LastAndThisMonthDatePicker), new PropertyMetadata(null));
+
+        /// <summary>
+        /// 本日を判断する時刻のオフセットを取得または設定します。
+        /// </summary>
+        public TimeSpan? TodayOffset
+        {
+            get
+            {
+                return (TimeSpan?)GetValue(TodayOffsetProperty);
+            }
+            set
+            {
+                SetValue(TodayOffsetProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// StartDateOffset 依存関係プロパティを識別します。このフィールドは読み取り専用です。
+        /// </summary>
+        public static readonly DependencyProperty StartDateOffsetProperty =
+            DependencyProperty.Register(nameof(StartDateOffset), typeof(int), typeof(LastAndThisMonthDatePicker), new PropertyMetadata(-30));
+
+        /// <summary>
+        /// 選択可能範囲の開始日のオフセットを取得または設定します。
+        /// </summary>
+        public int StartDateOffset
+        {
+            get
+            {
+                return (int)GetValue(StartDateOffsetProperty); 
+            }
+            set 
+            { 
+                SetValue(StartDateOffsetProperty, value); 
+            }
+        }
+
+        /// <summary>
+        /// EndDateOffset 依存関係プロパティを識別します。このフィールドは読み取り専用です。
+        /// </summary>
+        public static readonly DependencyProperty EndDateOffsetProperty =
+            DependencyProperty.Register(nameof(EndDateOffset), typeof(int), typeof(LastAndThisMonthDatePicker), new PropertyMetadata(1));
+
+        /// <summary>
+        /// 選択可能範囲の終了日のオフセットを取得または設定します。
+        /// </summary>
+        public int EndDateOffset
+        {
+            get
+            {
+                return (int)GetValue(EndDateOffsetProperty);
+            }
+            set
+            {
+                SetValue(EndDateOffsetProperty, value);
+            }
+        }
+
         /// <summary>
         /// <see cref="LastAndThisMonthDatePicker"/> クラスの静的な初期化をします。
         /// </summary>
