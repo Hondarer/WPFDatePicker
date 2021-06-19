@@ -4,9 +4,23 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:view="clr-namespace:WPFDatePicker.Views"
+        xmlns:vm="clr-namespace:WPFDatePicker.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
         <view:LastAndThisMonthDatePicker HorizontalAlignment="Center" />
+        <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel Height="20" Orientation="Horizontal">
+                <TextBox x:Name="setDateTime" Width="200" />
+                <Button Content="SET"
+                        Command="{Binding SetNowCommand, Source={x:Static vm:DateTimeManager.Instance}, Mode=OneWay}"
+                        CommandParameter="{Binding Text, ElementName=setDateTime}"/>
+            </StackPanel>
+            <TextBlock Width="200" Height="20" Text="{Binding Now, Source={x:Static vm:DateTimeManager.Instance}, Mode=OneWay}" />
+        </StackPanel>
     </Grid>
 </Window>
