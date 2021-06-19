@@ -14,7 +14,7 @@ namespace WPFDatePicker.ViewModels
             public bool CanPick { get; set; } = true;
         }
 
-        private DateTime _today = DateTime.Today;
+        private DateTime _today;
 
         public DateTime Today
         {
@@ -24,7 +24,10 @@ namespace WPFDatePicker.ViewModels
             }
             private set
             {
-                SetProperty(ref _today, value);
+                if (SetProperty(ref _today, value) == true)
+                {
+                    RefreshDatesViewModel();
+                }
             }
         }
 
@@ -46,12 +49,7 @@ namespace WPFDatePicker.ViewModels
             {
                 if (SetProperty(ref _todayOffset, value) == true)
                 {
-                    if (_todayOffset == null)
-                    {
-                        Today = DateTime.Today;
-                    }
-
-                    Today = DateTime.Today.AddTicks(((TimeSpan)TodayOffset).Ticks).Date;
+                    InvalidateToday();
                 }
             }
         }
@@ -109,7 +107,6 @@ namespace WPFDatePicker.ViewModels
                 SetProperty(ref _thisMonthHeader, value);
             }
         }
-
 
         private string _lastMonthHeader;
 
@@ -232,7 +229,26 @@ namespace WPFDatePicker.ViewModels
                    return true;
                });
 
-            RefreshDatesViewModel();
+            DateTimeManager.Instance.CurrentDateTimeChanged += DateTimeManager_CurrentDateTimeChanged;
+
+            InvalidateToday();
+        }
+
+        private void DateTimeManager_CurrentDateTimeChanged(object sender, EventArgs e)
+        {
+            InvalidateToday();
+        }
+
+        private void InvalidateToday()
+        {
+            if (TodayOffset == null)
+            {
+                Today = DateTimeManager.Instance.CurrentDateTime.Date;
+            }
+            else
+            {
+                Today = DateTimeManager.Instance.CurrentDateTime.Add((TimeSpan)TodayOffset).Date;
+            }
         }
 
         private void RefreshDatesViewModel()
@@ -255,6 +271,7 @@ namespace WPFDatePicker.ViewModels
             LastMonthHeader = "Last month";
 
             _selectedDate = Today;
+            OnPropertyChanged(nameof(SelectedDate));
         }
     }
 }

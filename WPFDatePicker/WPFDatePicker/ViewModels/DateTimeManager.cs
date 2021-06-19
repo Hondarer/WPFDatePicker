@@ -6,6 +6,8 @@ namespace WPFDatePicker.ViewModels
 {
     public class DateTimeManager : BindableBase
     {
+        public event EventHandler CurrentDateTimeChanged;
+
         private static readonly DateTimeManager s_instance = new DateTimeManager();
 
         public static DateTimeManager Instance
@@ -18,33 +20,36 @@ namespace WPFDatePicker.ViewModels
 
         private DispatcherTimer _dispatcherTimer;
 
-        private DateTime _now = DateTime.Now;
+        private DateTime _currentDateTime = DateTime.Now;
 
-        public DateTime Now
+        public DateTime CurrentDateTime
         {
             get
             {
-                return _now;
+                return _currentDateTime;
             }
             set
             {
-                SetProperty(ref _now, value);
+                if (SetProperty(ref _currentDateTime, value) == true)
+                {
+                    CurrentDateTimeChanged?.Invoke(this, EventArgs.Empty);
+                }
             }
         }
 
-        public DelegateCommand SetNowCommand { get; private set; }
+        public DelegateCommand SetCurrentDateTimeCommand { get; private set; }
 
         private readonly TimeSpan _timerTimeSpan = new TimeSpan(0, 0, 1);
 
         public DateTimeManager()
         {
-            SetNowCommand = new DelegateCommand(
-                parameter => 
+            SetCurrentDateTimeCommand = new DelegateCommand(
+                parameter =>
                 {
                     try
                     {
                         DateTime setDateTime = Convert.ToDateTime(parameter);
-                        Now = setDateTime;
+                        CurrentDateTime = setDateTime;
                     }
                     catch
                     {
@@ -62,7 +67,7 @@ namespace WPFDatePicker.ViewModels
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            Now = Now.Add(_timerTimeSpan);
+            CurrentDateTime = CurrentDateTime.Add(_timerTimeSpan);
         }
     }
 }
