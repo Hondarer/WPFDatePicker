@@ -24,10 +24,66 @@ namespace WPFDatePicker.ViewModels
             }
             private set
             {
-                if (SetProperty(ref _today, value) == true)
+                if (SetProperty(ref _today, value.Date) == true)
                 {
                     RefreshDatesViewModel();
                 }
+            }
+        }
+
+        private DateTime _startDate;
+
+        public DateTime StartDate
+        {
+            get
+            {
+                return _startDate;
+            }
+            private set
+            {
+                SetProperty(ref _startDate, value.Date);
+            }
+        }
+
+        private DateTime _endDate;
+
+        public DateTime EndDate
+        {
+            get
+            {
+                return _endDate;
+            }
+            private set
+            {
+                SetProperty(ref _endDate, value.Date);
+            }
+        }
+
+        private DateTime _thisMonth1st;
+
+        public DateTime ThisMonth1st
+        {
+            get
+            {
+                return _thisMonth1st;
+            }
+            private set
+            {
+                SetProperty(ref _thisMonth1st, value.Date);
+            }
+        }
+
+        private DateTime _lastMonth1st;
+
+        public DateTime LastMonth1st
+        {
+            get
+            {
+                return _lastMonth1st;
+            }
+            private set
+            {
+                SetProperty(ref _lastMonth1st, value.Date);
             }
         }
 
@@ -70,7 +126,10 @@ namespace WPFDatePicker.ViewModels
             }
             set
             {
-                SetProperty(ref _startDateOffset, value);
+                if(SetProperty(ref _startDateOffset, value)==true)
+                {
+                    RefreshDatesViewModel();
+                }
             }
         }
 
@@ -90,35 +149,10 @@ namespace WPFDatePicker.ViewModels
             }
             set
             {
-                SetProperty(ref _endDateOffset, value);
-            }
-        }
-
-        private string _thisMonthHeader;
-
-        public string ThisMonthHeader
-        {
-            get
-            {
-                return _thisMonthHeader;
-            }
-            private set
-            {
-                SetProperty(ref _thisMonthHeader, value);
-            }
-        }
-
-        private string _lastMonthHeader;
-
-        public string LastMonthHeader
-        {
-            get
-            {
-                return _lastMonthHeader;
-            }
-            private set
-            {
-                SetProperty(ref _lastMonthHeader, value);
+                if (SetProperty(ref _endDateOffset, value) == true)
+                {
+                    RefreshDatesViewModel();
+                }
             }
         }
 
@@ -253,22 +287,73 @@ namespace WPFDatePicker.ViewModels
 
         private void RefreshDatesViewModel()
         {
+            #region 開始・終了日の算出
+
+            // 範囲開始日
+            StartDate = Today.AddDays(StartDateOffset);
+
+            // 範囲終了日
+            DateTime endDate = Today.AddDays(EndDateOffset);
+
+            // 終了日が開始日より速い場合は、開始日に補正
+            if (endDate < StartDate)
+            {
+                endDate = StartDate;
+            }
+
+            EndDate = endDate;
+
+            #endregion
+
+            #region 先月1日、今月1日の算出
+
+            // 今月の1日を得る
+            ThisMonth1st = Today.AddDays(-Today.Day +1);
+
+            // 先月の1日を得る
+            LastMonth1st = ThisMonth1st.AddMonths(-1);
+
+            #endregion
+
             List<DateViewModel> _lastMonthDays = new List<DateViewModel>();
             List<DateViewModel> _thisMonthDays = new List<DateViewModel>();
 
-            for (int dayIndex = 0; dayIndex < (7 * 5); dayIndex++)
+            // 先月のカレンダー作成
+
+            for (int dayOfWeek = 0; dayOfWeek < (int)LastMonth1st.DayOfWeek; dayOfWeek++) // 日曜 = 0
             {
-                // TODO: 下記はレイアウトテスト用で、設定しているDateTimeは現段階ででたらめ
-                //       _today をもとに、カレンダーを生成する
-                _lastMonthDays.Add(new DateViewModel() { SpecifyDate = Today.AddDays(dayIndex) });
-                _thisMonthDays.Add(new DateViewModel() { SpecifyDate = Today.AddDays(dayIndex) });
+                _lastMonthDays.Add(null);
+            }
+            for (int day = 0; day < LastMonth1st.AddMonths(1).AddDays(-1).Day; day++)
+            {
+                DateViewModel dateViewModel = new DateViewModel() { SpecifyDate = LastMonth1st.AddDays(day) };
+                if ((dateViewModel.SpecifyDate < StartDate) || (EndDate < dateViewModel.SpecifyDate))
+                {
+                    dateViewModel.CanPick = false;
+                }
+
+                _lastMonthDays.Add(dateViewModel);
+            }
+
+            // 今月のカレンダー作成
+
+            for(int dayOfWeek=0;dayOfWeek<(int)ThisMonth1st.DayOfWeek;dayOfWeek++) // 日曜 = 0
+            {
+                _thisMonthDays.Add(null);
+            }
+            for(int day=0;day< ThisMonth1st.AddMonths(1).AddDays(-1).Day;day++)
+            {
+                DateViewModel dateViewModel = new DateViewModel() { SpecifyDate = ThisMonth1st.AddDays(day) };
+                if ((dateViewModel.SpecifyDate < StartDate) || (EndDate < dateViewModel.SpecifyDate))
+                {
+                    dateViewModel.CanPick = false;
+                }
+
+                _thisMonthDays.Add(dateViewModel);
             }
 
             LastMonthDays = _lastMonthDays;
             ThisMonthDays = _thisMonthDays;
-
-            ThisMonthHeader = "This month";
-            LastMonthHeader = "Last month";
 
             _selectedDate = Today;
             OnPropertyChanged(nameof(SelectedDate));
