@@ -16,6 +16,7 @@
         <Setter Property="TodayOffset" Value="{Binding TodayOffset, Mode=OneWayToSource}" />
         <Setter Property="StartDateOffset" Value="{Binding StartDateOffset, Mode=OneWayToSource}" />
         <Setter Property="EndDateOffset" Value="{Binding EndDateOffset, Mode=OneWayToSource}" />
+        <Setter Property="DefaultSelectDateOffset" Value="{Binding DefaultSelectDateOffset, Mode=OneWayToSource}" />
         <Setter Property="DataContext">
             <Setter.Value>
                 <vm:LastAndThisMonthDatePickerViewModel />

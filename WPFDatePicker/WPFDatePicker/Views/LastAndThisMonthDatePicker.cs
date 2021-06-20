@@ -105,6 +105,27 @@ namespace WPFDatePicker.Views
         }
 
         /// <summary>
+        /// DefaultSelectDateOffset 依存関係プロパティを識別します。このフィールドは読み取り専用です。
+        /// </summary>
+        public static readonly DependencyProperty DefaultSelectDateOffsetProperty =
+            DependencyProperty.Register(nameof(DefaultSelectDateOffset), typeof(int), typeof(LastAndThisMonthDatePicker), new PropertyMetadata(0));
+
+        /// <summary>
+        /// 既定の選択日のオフセットを取得または設定します。
+        /// </summary>
+        public int DefaultSelectDateOffset
+        {
+            get
+            {
+                return (int)GetValue(DefaultSelectDateOffsetProperty);
+            }
+            set
+            {
+                SetValue(DefaultSelectDateOffsetProperty, value);
+            }
+        }
+
+        /// <summary>
         /// <see cref="LastAndThisMonthDatePicker"/> クラスの静的な初期化をします。
         /// </summary>
         static LastAndThisMonthDatePicker()

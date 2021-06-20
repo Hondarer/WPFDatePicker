@@ -173,6 +173,29 @@ namespace WPFDatePicker.ViewModels
             }
         }
 
+        /// <summary>
+        /// 既定の選択日のオフセットを保持します。
+        /// </summary>
+        private int _defaultSelectDateOffset;
+
+        /// <summary>
+        /// 既定の選択日のオフセットを取得または設定します。
+        /// </summary>
+        public int DefaultSelectDateOffset
+        {
+            get
+            {
+                return _defaultSelectDateOffset;
+            }
+            set
+            {
+                if (SetProperty(ref _defaultSelectDateOffset, value) == true)
+                {
+                    RefreshDatesViewModel();
+                }
+            }
+        }
+
         private DateTime _selectedDate;
 
         public string SelectedDate
@@ -379,7 +402,7 @@ namespace WPFDatePicker.ViewModels
             }
             set
             {
-                SetProperty(ref _popupOpen, value); 
+                SetProperty(ref _popupOpen, value);
             }
         }
 
@@ -612,8 +635,17 @@ namespace WPFDatePicker.ViewModels
             // もし SelectedDate が選択範囲から逸脱していた場合には、選択日付を本日にする
             if ((_selectedDate < StartDate) || (EndDate < _selectedDate))
             {
-                // TODO: 初期選択日はどうあるべきか。常に本日でよいか。翌日が初期ということもあるのではないか。その場合オフセットを用意する。
-                ChangeDateCore(Today);
+                DateTime defaultSelectDate = Today.AddDays(DefaultSelectDateOffset);
+                if (defaultSelectDate < StartDate)
+                {
+                    defaultSelectDate = StartDate;
+                }
+                if (EndDate < defaultSelectDate)
+                {
+                    defaultSelectDate = EndDate;
+                }
+
+                ChangeDateCore(defaultSelectDate);
             }
             else
             {
