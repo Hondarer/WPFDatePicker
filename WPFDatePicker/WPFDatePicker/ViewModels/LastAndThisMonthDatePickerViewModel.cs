@@ -616,7 +616,7 @@ namespace WPFDatePicker.ViewModels
             }
             else
             {
-                // 翌日、当日、昨日、前週同曜日の再評価
+                // 明日、当日、昨日、前週同曜日の再評価
                 ChangeDateCore(_selectedDate);
             }
 

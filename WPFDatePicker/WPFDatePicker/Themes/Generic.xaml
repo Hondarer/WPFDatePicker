@@ -4,10 +4,12 @@
     xmlns:view="clr-namespace:WPFDatePicker.Views"
     xmlns:action="clr-namespace:WPFDatePicker.Mvvm.Actions"
     xmlns:vm="clr-namespace:WPFDatePicker.ViewModels"
+    xmlns:conv="clr-namespace:WPFDatePicker.Converters"
     xmlns:resrc="clr-namespace:WPFDatePicker.Resources"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
 
     <resrc:StringResource x:Key="StringResource" />
+    <conv:SelectedBackgroundConverter x:Key="SelectedBackgroundConverter" />
 
     <Style TargetType="{x:Type view:LastAndThisMonthDatePicker}">
         <Setter Property="SelectedDate" Value="{Binding SelectedDate, Mode=TwoWay}" />
@@ -26,8 +28,9 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
                         <StackPanel Orientation="Horizontal" Height="24">
+                            
                             <Grid>
-                                <TextBox x:Name="PART_selectedDateTextBox" Width="200" Text="{Binding SelectedDate}">
+                                <TextBox x:Name="PART_selectedDateTextBox" Width="160" Text="{Binding SelectedDate}" VerticalContentAlignment="Center">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="GotFocus">
                                             <action:SetProperty PropertyName="Visibility" Value="Collapsed" TargetObject="{Binding ElementName=PART_selectedDateDayOfWeek}" />
@@ -37,10 +40,11 @@
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </TextBox>
-                                <TextBlock x:Name="PART_selectedDateDayOfWeek" Text="{Binding SelectedDateDayOfWeek}" HorizontalAlignment="Right" IsHitTestVisible="False" Width="100" />
+                                <TextBlock x:Name="PART_selectedDateDayOfWeek" Text="{Binding SelectedDateDayOfWeek}"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center" IsHitTestVisible="False" Width="94" />
                             </Grid>
-                            
-                            <Button x:Name="PART_popupButton" Content="Popup">
+
+                            <Button x:Name="PART_popupButton" Content="&#xE787;" FontFamily="Segoe MDL2 Assets" Padding="4,0">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Click">
                                         <action:SetProperty PropertyName="IsOpen" Value="True" TargetObject="{Binding ElementName=PART_popup}" />
@@ -48,7 +52,6 @@
                                 </i:Interaction.Triggers>
                             </Button>
 
-                            <!-- TODO: focus on popup -->
                             <Popup x:Name="PART_popup" PlacementTarget="{Binding ElementName=PART_popupButton}" StaysOpen="False" IsOpen="{Binding PopupOpen}">
                                 <Popup.Resources>
                                     <DataTemplate x:Key="FillerTemplate" />
@@ -59,11 +62,9 @@
                                         <Button HorizontalContentAlignment="Right"
                                                 IsEnabled="{Binding CanPick}"
                                                 Command="{Binding DataContext.SpecifyDateCommamnd, RelativeSource={RelativeSource FindAncestor, AncestorType=Popup}}"
-                                                CommandParameter="{Binding SpecifyDate}">
-                                            <StackPanel>
-                                                <TextBlock Text="{Binding SpecifyDate, StringFormat={}{0:%d}}" />
-                                                <TextBlock Text="{Binding IsSelected}" HorizontalAlignment="Center" />
-                                            </StackPanel>
+                                                CommandParameter="{Binding SpecifyDate}"
+                                                Background="{Binding IsSelected, Converter={StaticResource SelectedBackgroundConverter}}">
+                                            <TextBlock Text="{Binding SpecifyDate, StringFormat={}{0:%d}}" />
                                         </Button>
                                     </DataTemplate>
                                 </Popup.Resources>
@@ -107,30 +108,23 @@
                                             </ItemsControl>
                                         </StackPanel>
                                         <StackPanel Grid.Column="2" Margin="4">
-                                            <Button Margin="4,0,0,4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="1">
-                                                <StackPanel>
-                                                    <TextBlock Text="{Binding Tomorrow, Source={StaticResource StringResource}}" />
-                                                    <TextBlock Text="{Binding IsTomorrow}" HorizontalAlignment="Center" />
-                                                </StackPanel>
-                                            </Button>
-                                            <Button x:Name="PART_todayButton" Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}">
-                                                <StackPanel>
-                                                    <TextBlock Text="{Binding Today, Source={StaticResource StringResource}}" />
-                                                    <TextBlock Text="{Binding IsToday}" HorizontalAlignment="Center" />
-                                                </StackPanel>
-                                            </Button>
-                                            <Button Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="-1">
-                                                <StackPanel>
-                                                    <TextBlock Text="{Binding Yesterday, Source={StaticResource StringResource}}" />
-                                                    <TextBlock Text="{Binding IsYesterday}" HorizontalAlignment="Center" />
-                                                </StackPanel>
-                                            </Button>
-                                            <Button Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="-7">
-                                                <StackPanel>
-                                                    <TextBlock Text="{Binding ThisDayLastWeek, Source={StaticResource StringResource}}" />
-                                                    <TextBlock Text="{Binding IsThisDayLastWeek}" HorizontalAlignment="Center" />
-                                                </StackPanel>
-                                            </Button>
+
+                                            <Button Margin="4,0,0,4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="1"
+                                                    Background="{Binding IsTomorrow, Converter={StaticResource SelectedBackgroundConverter}}"
+                                                    Content="{Binding Tomorrow, Source={StaticResource StringResource}}" />
+
+                                            <Button x:Name="PART_todayButton" Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}"
+                                                    Background="{Binding IsToday, Converter={StaticResource SelectedBackgroundConverter}}"
+                                                    Content="{Binding Today, Source={StaticResource StringResource}}" />
+                                            
+                                            <Button Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="-1"
+                                                    Background="{Binding IsYesterday, Converter={StaticResource SelectedBackgroundConverter}}"
+                                                    Content="{Binding Yesterday, Source={StaticResource StringResource}}" />
+                                            
+                                            <Button Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="-7"
+                                                    Background="{Binding IsThisDayLastWeek, Converter={StaticResource SelectedBackgroundConverter}}"
+                                                    Content="{Binding ThisDayLastWeek, Source={StaticResource StringResource}}" />
+                                            
                                         </StackPanel>
                                     </Grid>
                                 </Border>
