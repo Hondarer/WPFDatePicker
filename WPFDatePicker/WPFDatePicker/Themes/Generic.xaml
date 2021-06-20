@@ -61,7 +61,10 @@
                                                 IsEnabled="{Binding CanPick}"
                                                 Command="{Binding DataContext.SpecifyDateCommamnd, RelativeSource={RelativeSource FindAncestor, AncestorType=Popup}}"
                                                 CommandParameter="{Binding SpecifyDate}">
-                                            <TextBlock Text="{Binding SpecifyDate, StringFormat={}{0:%d}}" />
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding SpecifyDate, StringFormat={}{0:%d}}" />
+                                                <TextBlock Text="{Binding IsSelected}" HorizontalAlignment="Center" />
+                                            </StackPanel>
                                         </Button>
                                     </DataTemplate>
                                 </Popup.Resources>

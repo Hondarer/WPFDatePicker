@@ -15,6 +15,20 @@ namespace WPFDatePicker.ViewModels
             public DateTime SpecifyDate { get; set; }
 
             public bool CanPick { get; set; } = true;
+
+            private bool _isSelected = false;
+
+            public bool IsSelected
+            {
+                get
+                {
+                    return _isSelected;
+                }
+                set
+                {
+                    SetProperty(ref _isSelected, value);
+                }
+            }
         }
 
         private DateTime _today;
@@ -280,7 +294,37 @@ namespace WPFDatePicker.ViewModels
                 OnPropertyChanged(nameof(SelectedDate));
             }
 
-            if(_selectedDate == Today.AddDays(1))
+            foreach (object vm in LastMonthDays)
+            {
+                if (vm is DateViewModel dateViewModel)
+                {
+                    if (dateViewModel.SpecifyDate == _selectedDate)
+                    {
+                        dateViewModel.IsSelected = true;
+                    }
+                    else
+                    {
+                        dateViewModel.IsSelected = false;
+                    }
+                }
+            }
+
+            foreach (object vm in ThisMonthDays)
+            {
+                if (vm is DateViewModel dateViewModel)
+                {
+                    if (dateViewModel.SpecifyDate == _selectedDate)
+                    {
+                        dateViewModel.IsSelected = true;
+                    }
+                    else
+                    {
+                        dateViewModel.IsSelected = false;
+                    }
+                }
+            }
+
+            if (_selectedDate == Today.AddDays(1))
             {
                 IsTomorrow = true;
                 IsToday = false;
