@@ -72,11 +72,11 @@ namespace WPFDatePicker.Views
         {
             get
             {
-                return (int)GetValue(StartDateOffsetProperty); 
+                return (int)GetValue(StartDateOffsetProperty);
             }
-            set 
-            { 
-                SetValue(StartDateOffsetProperty, value); 
+            set
+            {
+                SetValue(StartDateOffsetProperty, value);
             }
         }
 
@@ -116,20 +116,47 @@ namespace WPFDatePicker.Views
         /// <inheritdoc/>
         public override void OnApplyTemplate()
         {
-            if (Template.FindName("PART_selectedDateTextBox", this) is TextBox dateTextBox)
+            if (Template.FindName("PART_selectedDateTextBox", this) is TextBox selectedDateTextBox)
             {
-                // うまく動作してない
-                //// フォーカスを得たときに全選択する
-                //dateTextBox.GotFocus += (sender, e) =>
-                //{
-                //    ((TextBox)sender).SelectAll();
-                //};
+                #region フォーカスを得たときに全選択する
+
+                // MEMO: Popup を開いた状態で TextBox にフォーカスを与えると全選択されない。詳細メカニズム未調査。機能に支障がないため、現状通りとしたい。
+
+                selectedDateTextBox.MouseDoubleClick += (sender, e) =>
+                {
+                    if (sender is TextBox textBox)
+                    {
+                        textBox.SelectAll();
+                    }
+                };
+
+                selectedDateTextBox.GotKeyboardFocus += (sender, e) =>
+                {
+                    if (sender is TextBox textBox)
+                    {
+                        textBox.SelectAll();
+                    }
+                };
+
+                selectedDateTextBox.PreviewMouseLeftButtonDown += (sender, e) =>
+                {
+                    if (sender is TextBox textBox)
+                    {
+                        if (textBox.IsKeyboardFocusWithin == false)
+                        {
+                            e.Handled = true;
+                            textBox.Focus();
+                        }
+                    }
+                };
+
+                #endregion
 
                 // Enter キーを入力した際に、ソースを更新する
-                dateTextBox.KeyDown += (sender, e) =>
+                selectedDateTextBox.KeyDown += (sender, e) =>
                 {
                     if (e.Key != Key.Enter)
-                    { 
+                    {
                         return;
                     }
 
@@ -137,7 +164,7 @@ namespace WPFDatePicker.Views
                     be.UpdateSource();
 
                     // 曜日表示を行いたいので、フォーカスを移動する
-                    TraversalRequest request = new TraversalRequest(FocusNavigationDirection.Next)
+                    TraversalRequest request = new TraversalRequest(FocusNavigationDirection.Previous)
                     {
                         Wrapped = true
                     };

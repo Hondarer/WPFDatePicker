@@ -61,6 +61,15 @@ namespace WPFDatePicker.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to yyyy/MM/dd,yy/MM/dd,MM/dd,yyyyMMdd,yyMMdd,MMdd.
+        /// </summary>
+        public static string DateParseFormats {
+            get {
+                return ResourceManager.GetString("DateParseFormats", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 前週同曜日.
         /// </summary>
         public static string ThisDayLastWeek {

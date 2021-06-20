@@ -183,14 +183,22 @@ namespace WPFDatePicker.ViewModels
             }
             set
             {
-                // 無効な値の場合にはソースを更新しない
-
-                // 日付として評価する
-                // TODO: yyyy/mm/dd, yyyymmdd, yy/mm/dd, yymmdd, mmddなど、きちんと順序だてて評価したほうがいい
-
-                //if (!DateTime.TryParseExact(targetValue, "y/M/d", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime parsedDateTime))
-                if (!DateTime.TryParse(value, out DateTime parsedDateTime)) // 現在のカルチャで解釈可能なら良いとする
+                // 入力された文字列を日付として評価する
+                if (DateTime.TryParseExact(value,
+                    Resources.StringResource.DateParseFormats.Split(','),
+                    CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime parsedDateTime) == false)
                 {
+                    // 無効な値の場合にはソースを更新しない
+                    // View を元の値に戻すために、PropertyChanged を発行する
+                    OnPropertyChanged();
+                    return;
+                }
+
+                // 選択可能な範囲にあるかチェック
+                if ((parsedDateTime < StartDate) || (EndDate < parsedDateTime))
+                {
+                    // 無効な値の場合にはソースを更新しない
+                    // View を元の値に戻すために、PropertyChanged を発行する
                     OnPropertyChanged();
                     return;
                 }
@@ -206,11 +214,11 @@ namespace WPFDatePicker.ViewModels
                 StringBuilder sb = new StringBuilder();
                 sb.Append($"{_selectedDate:(ddd)}");
 
-                if(IsTomorrow)
+                if (IsTomorrow)
                 {
                     sb.Append($" {Resources.StringResource.Tomorrow}");
                 }
-                else if(IsToday)
+                else if (IsToday)
                 {
                     sb.Append($" {Resources.StringResource.Today}");
                 }
@@ -284,8 +292,6 @@ namespace WPFDatePicker.ViewModels
         {
             // 日付以下の情報があれば削除する
             specifyDate = specifyDate.Date;
-
-            // TODO: 選択可能な範囲になければクリップ
 
             if (_selectedDate != specifyDate)
             {
@@ -439,7 +445,7 @@ namespace WPFDatePicker.ViewModels
                                // NOP
                            }
                        }
-                       specifyDate=Today.AddDays(offsetDay);
+                       specifyDate = Today.AddDays(offsetDay);
                    }
 
                    // もし SelectedDate が選択範囲から逸脱していた場合には、実行不可
@@ -535,14 +541,14 @@ namespace WPFDatePicker.ViewModels
             }
 
             // 範囲開始日が前々月以前の場合
-            if (StartDate<=LastMonth1st.AddDays(-1))
+            if (StartDate <= LastMonth1st.AddDays(-1))
             {
                 // 範囲開始日から前々月月末までを先月のカレンダーに追加
                 for (DateTime lastLastMonthDay = LastMonth1st.AddDays(-1); StartDate <= lastLastMonthDay; lastLastMonthDay = lastLastMonthDay.AddDays(-1))
                 {
                     DateViewModel dateViewModel = new DateViewModel() { SpecifyDate = lastLastMonthDay };
 
-                    _lastMonthDays.Insert(0,dateViewModel);
+                    _lastMonthDays.Insert(0, dateViewModel);
                 }
             }
 
@@ -570,7 +576,7 @@ namespace WPFDatePicker.ViewModels
             // 今月
             for (int dayOfWeek = 0; dayOfWeek < (int)ThisMonth1st.DayOfWeek; dayOfWeek++) // 日曜 = 0
             {
-                _thisMonthDays.Insert(0,null);
+                _thisMonthDays.Insert(0, null);
             }
 
             // 曜日ラベルの追加
