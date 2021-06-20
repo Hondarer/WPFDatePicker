@@ -47,10 +47,9 @@
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                             </Button>
-                            <TextBlock />
 
                             <!-- TODO: focus on popup -->
-                            <Popup x:Name="PART_popup" PlacementTarget="{Binding ElementName=PART_popupButton}" StaysOpen="False">
+                            <Popup x:Name="PART_popup" PlacementTarget="{Binding ElementName=PART_popupButton}" StaysOpen="False" IsOpen="{Binding PopupOpen}">
                                 <Popup.Resources>
                                     <DataTemplate x:Key="FillerTemplate" />
                                     <DataTemplate x:Key="LabelTemplate">
@@ -114,7 +113,7 @@
                                                     <TextBlock Text="{Binding IsTomorrow}" HorizontalAlignment="Center" />
                                                 </StackPanel>
                                             </Button>
-                                            <Button Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}">
+                                            <Button x:Name="PART_todayButton" Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}">
                                                 <StackPanel>
                                                     <TextBlock Text="{Binding Today, Source={StaticResource StringResource}}" />
                                                     <TextBlock Text="{Binding IsToday}" HorizontalAlignment="Center" />

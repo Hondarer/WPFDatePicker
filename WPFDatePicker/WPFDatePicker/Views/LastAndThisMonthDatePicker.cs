@@ -6,6 +6,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 
@@ -15,6 +16,8 @@ namespace WPFDatePicker.Views
     /// 前月と今月に特化した日付選択部品を提供します。
     /// </summary>
     [TemplatePart(Name = "PART_selectedDateTextBox", Type = typeof(TextBox))]
+    [TemplatePart(Name = "PART_popup", Type = typeof(Popup))]
+    [TemplatePart(Name = "PART_todayButton", Type = typeof(Button))]
     public class LastAndThisMonthDatePicker : Control
     {
         /// <summary>
@@ -116,13 +119,28 @@ namespace WPFDatePicker.Views
         /// <inheritdoc/>
         public override void OnApplyTemplate()
         {
-            if (Template.FindName("PART_selectedDateTextBox", this) is TextBox selectedDateTextBox)
+            // ポップアップを開いたときに、ポップアップ内の本日ボタンににフォーカスを移動する
+            if (Template.FindName("PART_popup", this) is Popup part_popup)
+            {
+                part_popup.Opened += (sender, e) =>
+                {
+                    if (sender is Popup popup)
+                    {
+                        if (Template.FindName("PART_todayButton", this) is Button part_todayButton)
+                        {
+                            part_todayButton.Focus();
+                        }
+                    }
+                };
+            }
+
+            if (Template.FindName("PART_selectedDateTextBox", this) is TextBox part_selectedDateTextBox)
             {
                 #region フォーカスを得たときに全選択する
 
                 // MEMO: Popup を開いた状態で TextBox にフォーカスを与えると全選択されない。詳細メカニズム未調査。機能に支障がないため、現状通りとしたい。
 
-                selectedDateTextBox.MouseDoubleClick += (sender, e) =>
+                part_selectedDateTextBox.MouseDoubleClick += (sender, e) =>
                 {
                     if (sender is TextBox textBox)
                     {
@@ -130,7 +148,7 @@ namespace WPFDatePicker.Views
                     }
                 };
 
-                selectedDateTextBox.GotKeyboardFocus += (sender, e) =>
+                part_selectedDateTextBox.GotKeyboardFocus += (sender, e) =>
                 {
                     if (sender is TextBox textBox)
                     {
@@ -138,7 +156,7 @@ namespace WPFDatePicker.Views
                     }
                 };
 
-                selectedDateTextBox.PreviewMouseLeftButtonDown += (sender, e) =>
+                part_selectedDateTextBox.PreviewMouseLeftButtonDown += (sender, e) =>
                 {
                     if (sender is TextBox textBox)
                     {
@@ -153,7 +171,7 @@ namespace WPFDatePicker.Views
                 #endregion
 
                 // Enter キーを入力した際に、ソースを更新する
-                selectedDateTextBox.KeyDown += (sender, e) =>
+                part_selectedDateTextBox.KeyDown += (sender, e) =>
                 {
                     if (e.Key != Key.Enter)
                     {

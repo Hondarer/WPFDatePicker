@@ -369,6 +369,20 @@ namespace WPFDatePicker.ViewModels
             OnPropertyChanged(nameof(SelectedDateDayOfWeek));
         }
 
+        private bool _popupOpen;
+
+        public bool PopupOpen
+        {
+            get
+            {
+                return _popupOpen;
+            }
+            set
+            {
+                SetProperty(ref _popupOpen, value); 
+            }
+        }
+
         public DelegateCommand SpecifyDateCommamnd { get; }
 
         private List<object> _lastMonthDays;
@@ -407,22 +421,26 @@ namespace WPFDatePicker.ViewModels
                    if (parameter is DateTime specifyDate)
                    {
                        ChangeDateCore(specifyDate);
-                       return;
+                   }
+                   else
+                   {
+                       int offsetDay = 0;
+                       if (parameter != null)
+                       {
+                           try
+                           {
+                               offsetDay = Convert.ToInt32(parameter);
+                           }
+                           catch
+                           {
+                               // NOP
+                           }
+                       }
+                       ChangeDateCore(Today.AddDays(offsetDay));
                    }
 
-                   int offsetDay = 0;
-                   if (parameter != null)
-                   {
-                       try
-                       {
-                           offsetDay = Convert.ToInt32(parameter);
-                       }
-                       catch
-                       {
-                           // NOP
-                       }
-                   }
-                   ChangeDateCore(Today.AddDays(offsetDay));
+                   // ポップアップを閉じる
+                   PopupOpen = false;
                },
                parameter =>
                {
