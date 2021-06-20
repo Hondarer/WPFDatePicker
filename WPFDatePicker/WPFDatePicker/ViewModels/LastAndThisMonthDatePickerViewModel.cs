@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Input;
 using WPFDatePicker.Commands;
 
 namespace WPFDatePicker.ViewModels
@@ -9,7 +11,7 @@ namespace WPFDatePicker.ViewModels
     {
         public class DateViewModel : BindableBase
         {
-            public DateTime? SpecifyDate { get; set; }
+            public DateTime SpecifyDate { get; set; }
 
             public bool CanPick { get; set; } = true;
         }
@@ -126,7 +128,7 @@ namespace WPFDatePicker.ViewModels
             }
             set
             {
-                if(SetProperty(ref _startDateOffset, value)==true)
+                if (SetProperty(ref _startDateOffset, value) == true)
                 {
                     RefreshDatesViewModel();
                 }
@@ -259,7 +261,7 @@ namespace WPFDatePicker.ViewModels
                },
                parameter =>
                {
-                   // TODO: 実行不可判定
+                   // TODO: 実行可否判定
                    return true;
                });
 
@@ -308,7 +310,7 @@ namespace WPFDatePicker.ViewModels
             #region 先月1日、今月1日の算出
 
             // 今月の1日を得る
-            ThisMonth1st = Today.AddDays(-Today.Day +1);
+            ThisMonth1st = Today.AddDays(-Today.Day + 1);
 
             // 先月の1日を得る
             LastMonth1st = ThisMonth1st.AddMonths(-1);
@@ -320,10 +322,6 @@ namespace WPFDatePicker.ViewModels
 
             // 先月のカレンダー作成
 
-            for (int dayOfWeek = 0; dayOfWeek < (int)LastMonth1st.DayOfWeek; dayOfWeek++) // 日曜 = 0
-            {
-                _lastMonthDays.Add(null);
-            }
             for (int day = 0; day < LastMonth1st.AddMonths(1).AddDays(-1).Day; day++)
             {
                 DateViewModel dateViewModel = new DateViewModel() { SpecifyDate = LastMonth1st.AddDays(day) };
@@ -337,11 +335,7 @@ namespace WPFDatePicker.ViewModels
 
             // 今月のカレンダー作成
 
-            for(int dayOfWeek=0;dayOfWeek<(int)ThisMonth1st.DayOfWeek;dayOfWeek++) // 日曜 = 0
-            {
-                _thisMonthDays.Add(null);
-            }
-            for(int day=0;day< ThisMonth1st.AddMonths(1).AddDays(-1).Day;day++)
+            for (int day = 0; day < ThisMonth1st.AddMonths(1).AddDays(-1).Day; day++)
             {
                 DateViewModel dateViewModel = new DateViewModel() { SpecifyDate = ThisMonth1st.AddDays(day) };
                 if ((dateViewModel.SpecifyDate < StartDate) || (EndDate < dateViewModel.SpecifyDate))
@@ -352,11 +346,53 @@ namespace WPFDatePicker.ViewModels
                 _thisMonthDays.Add(dateViewModel);
             }
 
+            // 範囲終了日が前々月以前の場合
+            if (StartDate<=LastMonth1st.AddDays(-1))
+            {
+                // 範囲終了日までを今月のカレンダーに追加
+                for (DateTime lastLastMonthDay = LastMonth1st.AddDays(-1); StartDate < lastLastMonthDay; lastLastMonthDay = lastLastMonthDay.AddDays(-1))
+                {
+                    DateViewModel dateViewModel = new DateViewModel() { SpecifyDate = lastLastMonthDay };
+
+                    _lastMonthDays.Insert(0,dateViewModel);
+                }
+            }
+
+            // 範囲終了日が翌月以降の場合
+            if (ThisMonth1st.AddMonths(1) <= EndDate)
+            {
+                // 範囲終了日までを今月のカレンダーに追加
+                for (DateTime nextMonthDay = ThisMonth1st.AddMonths(1); nextMonthDay < EndDate; nextMonthDay = nextMonthDay.AddDays(1))
+                {
+                    DateViewModel dateViewModel = new DateViewModel() { SpecifyDate = nextMonthDay };
+
+                    _thisMonthDays.Add(dateViewModel);
+                }
+            }
+
+            // カレンダー上の開始曜日の調整
+
+            // 先月
+            int lastMonthCalenderDayOfWeek = (int)_lastMonthDays.First().SpecifyDate.DayOfWeek;
+            for (int dayOfWeek = 0; dayOfWeek < lastMonthCalenderDayOfWeek; dayOfWeek++) // 日曜 = 0
+            {
+                _lastMonthDays.Insert(0, null);
+            }
+
+            // 今月
+            for (int dayOfWeek = 0; dayOfWeek < (int)ThisMonth1st.DayOfWeek; dayOfWeek++) // 日曜 = 0
+            {
+                _thisMonthDays.Insert(0,null);
+            }
+
             LastMonthDays = _lastMonthDays;
             ThisMonthDays = _thisMonthDays;
 
             _selectedDate = Today;
             OnPropertyChanged(nameof(SelectedDate));
+
+            // コマンドの実行可否再評価
+            CommandManager.InvalidateRequerySuggested();
         }
     }
 }

@@ -9,6 +9,7 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
 
     <conv:NullToVisibilityCollapsedConverter x:Key="NullToVisibilityCollapsedConverter" />
+    <resrc:StringResource x:Key="StringResource" />
 
     <Style TargetType="{x:Type view:LastAndThisMonthDatePicker}">
         <Setter Property="TodayOffset" Value="{Binding TodayOffset, Mode=OneWayToSource}" />
@@ -57,7 +58,7 @@
                                             <ColumnDefinition Width="1*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <StackPanel>
+                                        <StackPanel Margin="4">
                                             <TextBlock Text="{Binding LastMonth1st, StringFormat={}{0:Y}}" TextAlignment="Center" HorizontalAlignment="Stretch" />
                                             <ItemsControl ItemsSource="{Binding LastMonthDays}"
                                                           ItemTemplate="{StaticResource PickButtonTemplate}">
@@ -68,7 +69,7 @@
                                                 </ItemsControl.ItemsPanel>
                                             </ItemsControl>
                                         </StackPanel>
-                                        <StackPanel Grid.Column="1">
+                                        <StackPanel Grid.Column="1" Margin="4">
                                             <TextBlock Text="{Binding ThisMonth1st, StringFormat={}{0:Y}}" TextAlignment="Center" HorizontalAlignment="Stretch" />
                                             <ItemsControl ItemsSource="{Binding ThisMonthDays}"
                                                           ItemTemplate="{StaticResource PickButtonTemplate}">
@@ -79,11 +80,11 @@
                                                 </ItemsControl.ItemsPanel>
                                             </ItemsControl>
                                         </StackPanel>
-                                        <StackPanel Grid.Column="2">
-                                            <Button Content="Tomorrow" Command="{Binding SpecifyDateCommamnd}" CommandParameter="1" />
-                                            <Button Content="Today" Command="{Binding SpecifyDateCommamnd}" />
-                                            <Button Content="Yesterday" Command="{Binding SpecifyDateCommamnd}" CommandParameter="-1" />
-                                            <Button Content="This day last week" Command="{Binding SpecifyDateCommamnd}" CommandParameter="-7" />
+                                        <StackPanel Grid.Column="2" Margin="4">
+                                            <Button Content="{Binding Tomorrow, Source={StaticResource StringResource}}" Margin="4,0,0,4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="1" />
+                                            <Button Content="{Binding Today, Source={StaticResource StringResource}}" Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}" />
+                                            <Button Content="{Binding Yesterday, Source={StaticResource StringResource}}" Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="-1" />
+                                            <Button Content="{Binding ThisDayLastWeek, Source={StaticResource StringResource}}" Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="-7" />
                                         </StackPanel>
                                     </Grid>
                                 </Border>
