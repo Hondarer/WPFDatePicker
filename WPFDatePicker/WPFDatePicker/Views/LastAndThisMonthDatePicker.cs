@@ -14,9 +14,30 @@ namespace WPFDatePicker.Views
     /// <summary>
     /// 前月と今月に特化した日付選択部品を提供します。
     /// </summary>
-    [TemplatePart(Name = "PART_dateTextBox", Type = typeof(TextBox))]
+    [TemplatePart(Name = "PART_selectedDateTextBox", Type = typeof(TextBox))]
     public class LastAndThisMonthDatePicker : Control
     {
+        /// <summary>
+        /// SelectedDate 依存関係プロパティを識別します。このフィールドは読み取り専用です。
+        /// </summary>
+        public static readonly DependencyProperty SelectedDateProperty =
+            DependencyProperty.Register(nameof(SelectedDate), typeof(DateTime), typeof(LastAndThisMonthDatePicker), new PropertyMetadata(default(DateTime)));
+
+        /// <summary>
+        /// 選択された日付を取得または設定します。
+        /// </summary>
+        public DateTime SelectedDate
+        {
+            get
+            {
+                return (DateTime)GetValue(SelectedDateProperty);
+            }
+            set
+            {
+                SetValue(SelectedDateProperty, value);
+            }
+        }
+
         /// <summary>
         /// TodayOffset 依存関係プロパティを識別します。このフィールドは読み取り専用です。
         /// </summary>
@@ -95,13 +116,14 @@ namespace WPFDatePicker.Views
         /// <inheritdoc/>
         public override void OnApplyTemplate()
         {
-            if (Template.FindName("PART_dateTextBox", this) is TextBox dateTextBox)
+            if (Template.FindName("PART_selectedDateTextBox", this) is TextBox dateTextBox)
             {
-                // フォーカスを得たときに全選択する
-                dateTextBox.GotKeyboardFocus += (sender, e) =>
-                {
-                    ((TextBox)sender).SelectAll();
-                };
+                // うまく動作してない
+                //// フォーカスを得たときに全選択する
+                //dateTextBox.GotFocus += (sender, e) =>
+                //{
+                //    ((TextBox)sender).SelectAll();
+                //};
 
                 // Enter キーを入力した際に、ソースを更新する
                 dateTextBox.KeyDown += (sender, e) =>
@@ -110,8 +132,16 @@ namespace WPFDatePicker.Views
                     { 
                         return;
                     }
+
                     BindingExpression be = ((TextBox)sender).GetBindingExpression(TextBox.TextProperty);
                     be.UpdateSource();
+
+                    TraversalRequest request = new TraversalRequest(FocusNavigationDirection.Next)
+                    {
+                        Wrapped = true
+                    };
+                    ((TextBox)sender).MoveFocus(request);
+
                     e.Handled = true;
                 };
             }

@@ -4,14 +4,13 @@
     xmlns:view="clr-namespace:WPFDatePicker.Views"
     xmlns:action="clr-namespace:WPFDatePicker.Mvvm.Actions"
     xmlns:vm="clr-namespace:WPFDatePicker.ViewModels"
-    xmlns:conv="clr-namespace:WPFDatePicker.Converters"
     xmlns:resrc="clr-namespace:WPFDatePicker.Resources"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
 
-    <conv:NullToVisibilityCollapsedConverter x:Key="NullToVisibilityCollapsedConverter" />
     <resrc:StringResource x:Key="StringResource" />
 
     <Style TargetType="{x:Type view:LastAndThisMonthDatePicker}">
+        <Setter Property="SelectedDate" Value="{Binding SelectedDate, Mode=TwoWay}" />
         <Setter Property="TodayOffset" Value="{Binding TodayOffset, Mode=OneWayToSource}" />
         <Setter Property="StartDateOffset" Value="{Binding StartDateOffset, Mode=OneWayToSource}" />
         <Setter Property="EndDateOffset" Value="{Binding EndDateOffset, Mode=OneWayToSource}" />
@@ -27,7 +26,19 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
                         <StackPanel Orientation="Horizontal" Height="24">
-                            <TextBox x:Name="PART_dateTextBox" Width="200" Text="{Binding SelectedDate}" />
+                            <Grid>
+                                <TextBox x:Name="PART_selectedDateTextBox" Width="200" Text="{Binding SelectedDate}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="GotFocus">
+                                            <action:SetProperty PropertyName="Visibility" Value="Collapsed" TargetObject="{Binding ElementName=PART_selectedDateDayOfWeek}" />
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="LostFocus">
+                                            <action:SetProperty PropertyName="Visibility" Value="Visible" TargetObject="{Binding ElementName=PART_selectedDateDayOfWeek}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </TextBox>
+                                <TextBlock x:Name="PART_selectedDateDayOfWeek" Text="{Binding SelectedDateDayOfWeek}" HorizontalAlignment="Right" IsHitTestVisible="False" Width="100" />
+                            </Grid>
                             
                             <Button x:Name="PART_popupButton" Content="Popup">
                                 <i:Interaction.Triggers>
@@ -41,9 +52,12 @@
                             <!-- TODO: focus on popup -->
                             <Popup x:Name="PART_popup" PlacementTarget="{Binding ElementName=PART_popupButton}" StaysOpen="False">
                                 <Popup.Resources>
+                                    <DataTemplate x:Key="FillerTemplate" />
+                                    <DataTemplate x:Key="LabelTemplate">
+                                        <TextBlock Text="{Binding}" HorizontalAlignment="Center" />
+                                    </DataTemplate>
                                     <DataTemplate x:Key="PickButtonTemplate">
                                         <Button HorizontalContentAlignment="Right"
-                                                Visibility="{Binding Converter={StaticResource NullToVisibilityCollapsedConverter}}"
                                                 IsEnabled="{Binding CanPick}"
                                                 Command="{Binding DataContext.SpecifyDateCommamnd, RelativeSource={RelativeSource FindAncestor, AncestorType=Popup}}"
                                                 CommandParameter="{Binding SpecifyDate}">
@@ -60,8 +74,13 @@
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="4">
                                             <TextBlock Text="{Binding LastMonth1st, StringFormat={}{0:Y}}" TextAlignment="Center" HorizontalAlignment="Stretch" />
-                                            <ItemsControl ItemsSource="{Binding LastMonthDays}"
-                                                          ItemTemplate="{StaticResource PickButtonTemplate}">
+                                            <ItemsControl ItemsSource="{Binding LastMonthDays}">
+                                                <ItemsControl.ItemTemplateSelector>
+                                                    <view:LastAndThisMonthDatePickerTemplateSelector
+                                                        FillerTemplate="{StaticResource FillerTemplate}"
+                                                        LabelTemplate ="{StaticResource LabelTemplate}"
+                                                        PickButtonTemplate="{StaticResource PickButtonTemplate}" />
+                                                </ItemsControl.ItemTemplateSelector>
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate>
                                                         <UniformGrid Columns="7" />
@@ -71,8 +90,13 @@
                                         </StackPanel>
                                         <StackPanel Grid.Column="1" Margin="4">
                                             <TextBlock Text="{Binding ThisMonth1st, StringFormat={}{0:Y}}" TextAlignment="Center" HorizontalAlignment="Stretch" />
-                                            <ItemsControl ItemsSource="{Binding ThisMonthDays}"
-                                                          ItemTemplate="{StaticResource PickButtonTemplate}">
+                                            <ItemsControl ItemsSource="{Binding ThisMonthDays}">
+                                                <ItemsControl.ItemTemplateSelector>
+                                                    <view:LastAndThisMonthDatePickerTemplateSelector
+                                                        FillerTemplate="{StaticResource FillerTemplate}"
+                                                        LabelTemplate ="{StaticResource LabelTemplate}"
+                                                        PickButtonTemplate="{StaticResource PickButtonTemplate}" />
+                                                </ItemsControl.ItemTemplateSelector>
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate>
                                                         <UniformGrid Columns="7" />

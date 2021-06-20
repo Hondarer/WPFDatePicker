@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Input;
 using WPFDatePicker.Commands;
 
@@ -164,26 +164,31 @@ namespace WPFDatePicker.ViewModels
         {
             get
             {
-                return string.Format("{0:yyyy/MM/dd(ddd)}", _selectedDate);
+                return string.Format("{0:yyyy/MM/dd}", _selectedDate);
             }
             set
             {
                 // 無効な値の場合にはソースを更新しない
 
-                // 曜日を取り除く(日付だけ変更することを考慮)
-                string targetValue = Regex.Replace(value, @"\(.*\)", string.Empty);
-
                 // 日付として評価する
                 // TODO: yyyy/mm/dd, yyyymmdd, yy/mm/dd, yymmdd, mmddなど、きちんと順序だてて評価したほうがいい
 
                 //if (!DateTime.TryParseExact(targetValue, "y/M/d", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime parsedDateTime))
-                if (!DateTime.TryParse(targetValue, out DateTime parsedDateTime)) // 現在のカルチャで解釈可能なら良いとする
+                if (!DateTime.TryParse(value, out DateTime parsedDateTime)) // 現在のカルチャで解釈可能なら良いとする
                 {
                     OnPropertyChanged();
                     return;
                 }
 
                 ChangeDateCore(parsedDateTime);
+            }
+        }
+
+        public string SelectedDateDayOfWeek
+        {
+            get
+            {
+                return string.Format("{0:(ddd)}", _selectedDate);
             }
         }
 
@@ -198,6 +203,7 @@ namespace WPFDatePicker.ViewModels
             {
                 _selectedDate = specifyDate;
                 OnPropertyChanged(nameof(SelectedDate));
+                OnPropertyChanged(nameof(SelectedDateDayOfWeek));
                 return true;
             }
 
@@ -206,9 +212,9 @@ namespace WPFDatePicker.ViewModels
 
         public DelegateCommand SpecifyDateCommamnd { get; }
 
-        private List<DateViewModel> _lastMonthDays;
+        private List<object> _lastMonthDays;
 
-        public List<DateViewModel> LastMonthDays
+        public List<object> LastMonthDays
         {
             get
             {
@@ -220,9 +226,9 @@ namespace WPFDatePicker.ViewModels
             }
         }
 
-        private List<DateViewModel> _thisMonthDays;
+        private List<object> _thisMonthDays;
 
-        public List<DateViewModel> ThisMonthDays
+        public List<object> ThisMonthDays
         {
             get
             {
@@ -261,7 +267,34 @@ namespace WPFDatePicker.ViewModels
                },
                parameter =>
                {
-                   // TODO: 実行可否判定
+                   DateTime specifyDate;
+                   if (parameter is DateTime)
+                   {
+                       specifyDate = (DateTime)parameter;
+                   }
+                   else
+                   {
+                       int offsetDay = 0;
+                       if (parameter != null)
+                       {
+                           try
+                           {
+                               offsetDay = Convert.ToInt32(parameter);
+                           }
+                           catch
+                           {
+                               // NOP
+                           }
+                       }
+                       specifyDate=Today.AddDays(offsetDay);
+                   }
+
+                   // もし SelectedDate が選択範囲から逸脱していた場合には、実行不可
+                   if ((specifyDate < StartDate) || (EndDate < specifyDate))
+                   {
+                       return false;
+                   }
+
                    return true;
                });
 
@@ -317,8 +350,8 @@ namespace WPFDatePicker.ViewModels
 
             #endregion
 
-            List<DateViewModel> _lastMonthDays = new List<DateViewModel>();
-            List<DateViewModel> _thisMonthDays = new List<DateViewModel>();
+            List<object> _lastMonthDays = new List<object>();
+            List<object> _thisMonthDays = new List<object>();
 
             // 先月のカレンダー作成
 
@@ -373,7 +406,7 @@ namespace WPFDatePicker.ViewModels
             // カレンダー上の開始曜日の調整
 
             // 先月
-            int lastMonthCalenderDayOfWeek = (int)_lastMonthDays.First().SpecifyDate.DayOfWeek;
+            int lastMonthCalenderDayOfWeek = (int)((DateViewModel)_lastMonthDays.First()).SpecifyDate.DayOfWeek;
             for (int dayOfWeek = 0; dayOfWeek < lastMonthCalenderDayOfWeek; dayOfWeek++) // 日曜 = 0
             {
                 _lastMonthDays.Insert(0, null);
@@ -385,11 +418,21 @@ namespace WPFDatePicker.ViewModels
                 _thisMonthDays.Insert(0,null);
             }
 
+            // 曜日ラベルの追加
+            for (int dayOfWeek = (int)DayOfWeek.Saturday; dayOfWeek >= (int)DayOfWeek.Sunday; dayOfWeek--)
+            {
+                _lastMonthDays.Insert(0, CultureInfo.CurrentUICulture.DateTimeFormat.GetShortestDayName((DayOfWeek)dayOfWeek));
+                _thisMonthDays.Insert(0, CultureInfo.CurrentUICulture.DateTimeFormat.GetShortestDayName((DayOfWeek)dayOfWeek));
+            }
+
             LastMonthDays = _lastMonthDays;
             ThisMonthDays = _thisMonthDays;
 
-            _selectedDate = Today;
-            OnPropertyChanged(nameof(SelectedDate));
+            // もし SelectedDate が選択範囲から逸脱していた場合には、選択日付を本日にする
+            if ((_selectedDate < StartDate) || (EndDate < _selectedDate))
+            {
+                ChangeDateCore(Today);
+            }
 
             // コマンドの実行可否再評価
             CommandManager.InvalidateRequerySuggested();

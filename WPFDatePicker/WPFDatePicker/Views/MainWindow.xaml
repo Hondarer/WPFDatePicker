@@ -12,7 +12,10 @@
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <view:LastAndThisMonthDatePicker HorizontalAlignment="Center" />
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Width="200" Height="20" Text="{Binding SelectedDate, ElementName=lastAndThisMonthDatePicker}" />
+            <view:LastAndThisMonthDatePicker x:Name="lastAndThisMonthDatePicker" HorizontalAlignment="Center" />
+        </StackPanel>
         <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
             <StackPanel Height="20" Orientation="Horizontal">
                 <TextBox x:Name="dateTime" Width="200" />
