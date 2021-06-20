@@ -54,12 +54,15 @@
 
                             <Popup x:Name="PART_popup" PlacementTarget="{Binding ElementName=PART_popupButton}" StaysOpen="False" IsOpen="{Binding PopupOpen}">
                                 <Popup.Resources>
+                                    
                                     <DataTemplate x:Key="FillerTemplate" />
+                                    
                                     <DataTemplate x:Key="LabelTemplate">
                                         <TextBlock Text="{Binding}" HorizontalAlignment="Center" />
                                     </DataTemplate>
+                                    
                                     <DataTemplate x:Key="PickButtonTemplate">
-                                        <Button HorizontalContentAlignment="Right"
+                                        <Button HorizontalContentAlignment="Right" Padding="4"
                                                 IsEnabled="{Binding CanPick}"
                                                 Command="{Binding DataContext.SpecifyDateCommamnd, RelativeSource={RelativeSource FindAncestor, AncestorType=Popup}}"
                                                 CommandParameter="{Binding SpecifyDate}"
@@ -67,6 +70,7 @@
                                             <TextBlock Text="{Binding SpecifyDate, StringFormat={}{0:%d}}" />
                                         </Button>
                                     </DataTemplate>
+                                    
                                 </Popup.Resources>
                                 <Border Background="#C0C0C0">
                                     <Grid>
@@ -109,19 +113,19 @@
                                         </StackPanel>
                                         <StackPanel Grid.Column="2" Margin="4">
 
-                                            <Button Margin="4,0,0,4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="1"
+                                            <Button Margin="4,0,0,4" Padding="4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="1"
                                                     Background="{Binding IsTomorrow, Converter={StaticResource SelectedBackgroundConverter}}"
                                                     Content="{Binding Tomorrow, Source={StaticResource StringResource}}" />
 
-                                            <Button x:Name="PART_todayButton" Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}"
+                                            <Button x:Name="PART_todayButton" Margin="4,4,0,4" Padding="4" Command="{Binding SpecifyDateCommamnd}"
                                                     Background="{Binding IsToday, Converter={StaticResource SelectedBackgroundConverter}}"
                                                     Content="{Binding Today, Source={StaticResource StringResource}}" />
-                                            
-                                            <Button Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="-1"
+
+                                            <Button Margin="4,4,0,4" Padding="4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="-1"
                                                     Background="{Binding IsYesterday, Converter={StaticResource SelectedBackgroundConverter}}"
                                                     Content="{Binding Yesterday, Source={StaticResource StringResource}}" />
-                                            
-                                            <Button Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="-7"
+
+                                            <Button Margin="4,4,0,4" Padding="4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="-7"
                                                     Background="{Binding IsThisDayLastWeek, Converter={StaticResource SelectedBackgroundConverter}}"
                                                     Content="{Binding ThisDayLastWeek, Source={StaticResource StringResource}}" />
                                             
