@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Windows.Input;
 using WPFDatePicker.Commands;
 
@@ -188,11 +189,84 @@ namespace WPFDatePicker.ViewModels
         {
             get
             {
-                return string.Format("{0:(ddd)}", _selectedDate);
+                StringBuilder sb = new StringBuilder();
+                sb.Append($"{_selectedDate:(ddd)}");
+
+                if(IsTomorrow)
+                {
+                    sb.Append($" {Resources.StringResource.Tomorrow}");
+                }
+                else if(IsToday)
+                {
+                    sb.Append($" {Resources.StringResource.Today}");
+                }
+                else if (IsYesterday)
+                {
+                    sb.Append($" {Resources.StringResource.Yesterday}");
+                }
+                else if (IsThisDayLastWeek)
+                {
+                    sb.Append($" {Resources.StringResource.ThisDayLastWeek}");
+                }
+                else
+                {
+                    // NOP
+                }
+
+                return sb.ToString();
             }
         }
 
-        private bool ChangeDateCore(DateTime specifyDate)
+        private bool _isTomorrow;
+        public bool IsTomorrow
+        {
+            get
+            {
+                return _isTomorrow;
+            }
+            private set
+            {
+                SetProperty(ref _isTomorrow, value);
+            }
+        }
+        private bool _isToday;
+        public bool IsToday
+        {
+            get
+            {
+                return _isToday;
+            }
+            private set
+            {
+                SetProperty(ref _isToday, value);
+            }
+        }
+        private bool _isYesterday;
+        public bool IsYesterday
+        {
+            get
+            {
+                return _isYesterday;
+            }
+            private set
+            {
+                SetProperty(ref _isYesterday, value);
+            }
+        }
+        private bool _isThisDayLastWeek;
+        public bool IsThisDayLastWeek
+        {
+            get
+            {
+                return _isThisDayLastWeek;
+            }
+            private set
+            {
+                SetProperty(ref _isThisDayLastWeek, value);
+            }
+        }
+
+        private void ChangeDateCore(DateTime specifyDate)
         {
             // 日付以下の情報があれば削除する
             specifyDate = specifyDate.Date;
@@ -202,12 +276,47 @@ namespace WPFDatePicker.ViewModels
             if (_selectedDate != specifyDate)
             {
                 _selectedDate = specifyDate;
+
                 OnPropertyChanged(nameof(SelectedDate));
-                OnPropertyChanged(nameof(SelectedDateDayOfWeek));
-                return true;
             }
 
-            return false;
+            if(_selectedDate == Today.AddDays(1))
+            {
+                IsTomorrow = true;
+                IsToday = false;
+                IsYesterday = false;
+                IsThisDayLastWeek = false;
+            }
+            else if (_selectedDate == Today)
+            {
+                IsTomorrow = false;
+                IsToday = true;
+                IsYesterday = false;
+                IsThisDayLastWeek = false;
+            }
+            else if (_selectedDate == Today.AddDays(-1))
+            {
+                IsTomorrow = false;
+                IsToday = false;
+                IsYesterday = true;
+                IsThisDayLastWeek = false;
+            }
+            else if (_selectedDate == Today.AddDays(-7))
+            {
+                IsTomorrow = false;
+                IsToday = false;
+                IsYesterday = false;
+                IsThisDayLastWeek = true;
+            }
+            else
+            {
+                IsTomorrow = false;
+                IsToday = false;
+                IsYesterday = false;
+                IsThisDayLastWeek = false;
+            }
+
+            OnPropertyChanged(nameof(SelectedDateDayOfWeek));
         }
 
         public DelegateCommand SpecifyDateCommamnd { get; }
@@ -350,6 +459,8 @@ namespace WPFDatePicker.ViewModels
 
             #endregion
 
+            #region カレンダーの作成
+
             List<object> _lastMonthDays = new List<object>();
             List<object> _thisMonthDays = new List<object>();
 
@@ -379,11 +490,11 @@ namespace WPFDatePicker.ViewModels
                 _thisMonthDays.Add(dateViewModel);
             }
 
-            // 範囲終了日が前々月以前の場合
+            // 範囲開始日が前々月以前の場合
             if (StartDate<=LastMonth1st.AddDays(-1))
             {
-                // 範囲終了日までを今月のカレンダーに追加
-                for (DateTime lastLastMonthDay = LastMonth1st.AddDays(-1); StartDate < lastLastMonthDay; lastLastMonthDay = lastLastMonthDay.AddDays(-1))
+                // 範囲開始日から前々月月末までを先月のカレンダーに追加
+                for (DateTime lastLastMonthDay = LastMonth1st.AddDays(-1); StartDate <= lastLastMonthDay; lastLastMonthDay = lastLastMonthDay.AddDays(-1))
                 {
                     DateViewModel dateViewModel = new DateViewModel() { SpecifyDate = lastLastMonthDay };
 
@@ -394,8 +505,8 @@ namespace WPFDatePicker.ViewModels
             // 範囲終了日が翌月以降の場合
             if (ThisMonth1st.AddMonths(1) <= EndDate)
             {
-                // 範囲終了日までを今月のカレンダーに追加
-                for (DateTime nextMonthDay = ThisMonth1st.AddMonths(1); nextMonthDay < EndDate; nextMonthDay = nextMonthDay.AddDays(1))
+                // 翌月1日から範囲終了日までを今月のカレンダーに追加
+                for (DateTime nextMonthDay = ThisMonth1st.AddMonths(1); nextMonthDay <= EndDate; nextMonthDay = nextMonthDay.AddDays(1))
                 {
                     DateViewModel dateViewModel = new DateViewModel() { SpecifyDate = nextMonthDay };
 
@@ -428,13 +539,20 @@ namespace WPFDatePicker.ViewModels
             LastMonthDays = _lastMonthDays;
             ThisMonthDays = _thisMonthDays;
 
+            #endregion
+
             // もし SelectedDate が選択範囲から逸脱していた場合には、選択日付を本日にする
             if ((_selectedDate < StartDate) || (EndDate < _selectedDate))
             {
                 ChangeDateCore(Today);
             }
+            else
+            {
+                // 翌日、当日、昨日、前週同曜日の再評価
+                ChangeDateCore(_selectedDate);
+            }
 
-            // コマンドの実行可否再評価
+            // コマンドの実行可否再評価を依頼
             CommandManager.InvalidateRequerySuggested();
         }
     }

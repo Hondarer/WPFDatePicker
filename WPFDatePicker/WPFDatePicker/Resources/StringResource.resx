@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ThisDayLastWeek" xml:space="preserve">
-    <value>This day last week</value>
+    <value>前週同曜日</value>
   </data>
   <data name="Today" xml:space="preserve">
-    <value>Today</value>
+    <value>本日</value>
   </data>
   <data name="Tomorrow" xml:space="preserve">
-    <value>Tomorrow</value>
+    <value>翌日</value>
   </data>
   <data name="Yesterday" xml:space="preserve">
-    <value>Yesterday</value>
+    <value>昨日</value>
   </data>
 </root>

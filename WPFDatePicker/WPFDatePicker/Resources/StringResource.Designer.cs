@@ -61,7 +61,7 @@ namespace WPFDatePicker.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This day last week.
+        ///   Looks up a localized string similar to 前週同曜日.
         /// </summary>
         public static string ThisDayLastWeek {
             get {
@@ -70,7 +70,7 @@ namespace WPFDatePicker.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Today.
+        ///   Looks up a localized string similar to 本日.
         /// </summary>
         public static string Today {
             get {
@@ -79,7 +79,7 @@ namespace WPFDatePicker.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tomorrow.
+        ///   Looks up a localized string similar to 翌日.
         /// </summary>
         public static string Tomorrow {
             get {
@@ -88,7 +88,7 @@ namespace WPFDatePicker.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Yesterday.
+        ///   Looks up a localized string similar to 昨日.
         /// </summary>
         public static string Yesterday {
             get {

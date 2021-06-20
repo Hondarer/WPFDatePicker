@@ -10,13 +10,7 @@ namespace WPFDatePicker.Commands
 
         private readonly Func<object, bool> _canExecute;
 
-        private readonly Func<object, object> _indexer;
-
         public DelegateCommand(Action<object> execute) : this(execute, o => true)
-        {
-        }
-
-        public DelegateCommand(Action<object> execute, Func<object, object> indexer) : this(execute, o => true, indexer)
         {
         }
 
@@ -24,13 +18,6 @@ namespace WPFDatePicker.Commands
         {
             _execute = execute;
             _canExecute = canExecute;
-        }
-
-        public DelegateCommand(Action<object> execute, Func<object, bool> canExecute, Func<object, object> indexer)
-        {
-            _execute = execute;
-            _canExecute = canExecute;
-            _indexer = indexer;
         }
 
         public bool CanExecute(object parameter)
@@ -68,19 +55,6 @@ namespace WPFDatePicker.Commands
         public static void RaiseCanExecuteChanged()
         {
             CommandManager.InvalidateRequerySuggested();
-        }
-
-        public object this[object index]
-        {
-            get
-            {
-                if (_indexer == null)
-                {
-                    return null;
-                }
-
-                return _indexer(index);
-            }
         }
     }
 }

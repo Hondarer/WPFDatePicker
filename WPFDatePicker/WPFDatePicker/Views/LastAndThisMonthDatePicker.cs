@@ -136,6 +136,7 @@ namespace WPFDatePicker.Views
                     BindingExpression be = ((TextBox)sender).GetBindingExpression(TextBox.TextProperty);
                     be.UpdateSource();
 
+                    // 曜日表示を行いたいので、フォーカスを移動する
                     TraversalRequest request = new TraversalRequest(FocusNavigationDirection.Next)
                     {
                         Wrapped = true
