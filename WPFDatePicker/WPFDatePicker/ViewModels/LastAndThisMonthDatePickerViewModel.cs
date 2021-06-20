@@ -130,7 +130,7 @@ namespace WPFDatePicker.ViewModels
         /// <summary>
         /// 選択可能範囲の開始日のオフセットを保持します。
         /// </summary>
-        private int _startDateOffset;
+        private int _startDateOffset = -30;
 
         /// <summary>
         /// 選択可能範囲の開始日のオフセットを取得または設定します。
@@ -153,7 +153,7 @@ namespace WPFDatePicker.ViewModels
         /// <summary>
         /// 選択可能範囲の終了日のオフセットを保持します。
         /// </summary>
-        private int _endDateOffset;
+        private int _endDateOffset = 1;
 
         /// <summary>
         /// 選択可能範囲の開始日のオフセットを取得または設定します。
@@ -176,7 +176,7 @@ namespace WPFDatePicker.ViewModels
         /// <summary>
         /// 既定の選択日のオフセットを保持します。
         /// </summary>
-        private int _defaultSelectDateOffset;
+        private int _defaultSelectDateOffset = 0;
 
         /// <summary>
         /// 既定の選択日のオフセットを取得または設定します。
@@ -191,7 +191,7 @@ namespace WPFDatePicker.ViewModels
             {
                 if (SetProperty(ref _defaultSelectDateOffset, value) == true)
                 {
-                    RefreshDatesViewModel();
+                    ChangeDateCore(Today.AddDays(DefaultSelectDateOffset));
                 }
             }
         }
@@ -632,20 +632,10 @@ namespace WPFDatePicker.ViewModels
 
             #endregion
 
-            // もし SelectedDate が選択範囲から逸脱していた場合には、選択日付を本日にする
+            // もし SelectedDate が選択範囲から逸脱していた場合には、選択日付を既定の日にする
             if ((_selectedDate < StartDate) || (EndDate < _selectedDate))
             {
-                DateTime defaultSelectDate = Today.AddDays(DefaultSelectDateOffset);
-                if (defaultSelectDate < StartDate)
-                {
-                    defaultSelectDate = StartDate;
-                }
-                if (EndDate < defaultSelectDate)
-                {
-                    defaultSelectDate = EndDate;
-                }
-
-                ChangeDateCore(defaultSelectDate);
+                ChangeDateCore(Today.AddDays(DefaultSelectDateOffset));
             }
             else
             {

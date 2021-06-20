@@ -1,9 +1,4 @@
-﻿// 以下を処理すれば、左右キーで選択範囲を変更したり、上下キーで値を変更したりできるはず
-// TextBox.Select(Int32, Int32)
-// TextBox.SelectionStart
-// TextBox.SelectionLength
-
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -131,10 +126,6 @@ namespace WPFDatePicker.Views
         static LastAndThisMonthDatePicker()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(LastAndThisMonthDatePicker), new FrameworkPropertyMetadata(typeof(LastAndThisMonthDatePicker)));
-        }
-
-        public LastAndThisMonthDatePicker()
-        {
         }
 
         /// <inheritdoc/>
