@@ -612,6 +612,7 @@ namespace WPFDatePicker.ViewModels
             // もし SelectedDate が選択範囲から逸脱していた場合には、選択日付を本日にする
             if ((_selectedDate < StartDate) || (EndDate < _selectedDate))
             {
+                // TODO: 初期選択日はどうあるべきか。常に本日でよいか。翌日が初期ということもあるのではないか。その場合オフセットを用意する。
                 ChangeDateCore(Today);
             }
             else
