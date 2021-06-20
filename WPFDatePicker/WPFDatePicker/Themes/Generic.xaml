@@ -105,10 +105,30 @@
                                             </ItemsControl>
                                         </StackPanel>
                                         <StackPanel Grid.Column="2" Margin="4">
-                                            <Button Content="{Binding Tomorrow, Source={StaticResource StringResource}}" Margin="4,0,0,4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="1" />
-                                            <Button Content="{Binding Today, Source={StaticResource StringResource}}" Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}" />
-                                            <Button Content="{Binding Yesterday, Source={StaticResource StringResource}}" Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="-1" />
-                                            <Button Content="{Binding ThisDayLastWeek, Source={StaticResource StringResource}}" Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="-7" />
+                                            <Button Margin="4,0,0,4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="1">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Tomorrow, Source={StaticResource StringResource}}" />
+                                                    <TextBlock Text="{Binding IsTomorrow}" HorizontalAlignment="Center" />
+                                                </StackPanel>
+                                            </Button>
+                                            <Button Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Today, Source={StaticResource StringResource}}" />
+                                                    <TextBlock Text="{Binding IsToday}" HorizontalAlignment="Center" />
+                                                </StackPanel>
+                                            </Button>
+                                            <Button Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="-1">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Yesterday, Source={StaticResource StringResource}}" />
+                                                    <TextBlock Text="{Binding IsYesterday}" HorizontalAlignment="Center" />
+                                                </StackPanel>
+                                            </Button>
+                                            <Button Margin="4,4,0,4" Command="{Binding SpecifyDateCommamnd}" CommandParameter="-7">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding ThisDayLastWeek, Source={StaticResource StringResource}}" />
+                                                    <TextBlock Text="{Binding IsThisDayLastWeek}" HorizontalAlignment="Center" />
+                                                </StackPanel>
+                                            </Button>
                                         </StackPanel>
                                     </Grid>
                                 </Border>
