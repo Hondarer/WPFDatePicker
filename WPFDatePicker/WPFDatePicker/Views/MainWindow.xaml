@@ -11,19 +11,50 @@
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
+        
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Width="200" Height="20" Text="{Binding SelectedDate, ElementName=lastAndThisMonthDatePicker}" />
             <view:LastAndThisMonthDatePicker x:Name="lastAndThisMonthDatePicker" HorizontalAlignment="Center" />
         </StackPanel>
-        <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <StackPanel Height="20" Orientation="Horizontal">
-                <TextBox x:Name="dateTime" Width="200" />
-                <Button Content="SET"
-                        Command="{Binding SetCurrentDateTimeCommand, Source={x:Static vm:DateTimeManager.Instance}, Mode=OneWay}"
-                        CommandParameter="{Binding Text, ElementName=dateTime}"/>
+
+        <GroupBox Header="Properties" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel>
+                <StackPanel Height="20" Orientation="Horizontal">
+                    <TextBlock Width="200" Height="20" Text="SelectedDate" />
+                    <TextBlock Width="200" Height="20" Text="{Binding SelectedDate, ElementName=lastAndThisMonthDatePicker}" />
+                </StackPanel>
+                <StackPanel Height="20" Orientation="Horizontal">
+                    <TextBlock Width="200" Height="20" Text="TodayOffset:" />
+                    <TextBox Width="200" Height="20" HorizontalContentAlignment="Right" Text="{Binding TodayOffset, ElementName=lastAndThisMonthDatePicker, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <StackPanel Height="20" Orientation="Horizontal">
+                    <TextBlock Width="200" Height="20" Text="StartDateOffset:" />
+                    <TextBox Width="200" Height="20" HorizontalContentAlignment="Right" Text="{Binding StartDateOffset, ElementName=lastAndThisMonthDatePicker, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <StackPanel Height="20" Orientation="Horizontal">
+                    <TextBlock Width="200" Height="20" Text="EndDateOffset:" />
+                    <TextBox Width="200" Height="20" HorizontalContentAlignment="Right" Text="{Binding EndDateOffset, ElementName=lastAndThisMonthDatePicker, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <StackPanel Height="20" Orientation="Horizontal">
+                    <TextBlock Width="200" Height="20" Text="DefaultSelectDateOffset:" />
+                    <TextBox Width="200" Height="20" HorizontalContentAlignment="Right" Text="{Binding DefaultSelectDateOffset, ElementName=lastAndThisMonthDatePicker, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
             </StackPanel>
-            <TextBlock Width="200" Height="20" Text="{Binding CurrentDateTime, Source={x:Static vm:DateTimeManager.Instance}, Mode=OneWay}" />
-        </StackPanel>
+        </GroupBox>
+
+        <GroupBox Header="Curent time manager" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel>
+                <StackPanel Height="20" Orientation="Horizontal">
+                    <TextBlock Width="200" Height="20" Text="Current time:" />
+                    <TextBox x:Name="dateTime" Width="200" />
+                    <Button Content="SET" Padding="8,0"
+                            Command="{Binding SetCurrentDateTimeCommand, Source={x:Static vm:DateTimeManager.Instance}, Mode=OneWay}"
+                            CommandParameter="{Binding Text, ElementName=dateTime}"/>
+                </StackPanel>
+                <TextBlock Margin="200,0,0,0" HorizontalAlignment="Left" Width="200" Height="20" Text="{Binding CurrentDateTime, Source={x:Static vm:DateTimeManager.Instance}, Mode=OneWay}" />
+            </StackPanel>
+        </GroupBox>
+        
     </Grid>
 </Window>

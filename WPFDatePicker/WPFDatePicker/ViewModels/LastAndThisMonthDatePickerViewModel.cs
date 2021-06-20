@@ -107,12 +107,12 @@ namespace WPFDatePicker.ViewModels
         /// <summary>
         /// 本日を判断する時刻のオフセットを保持します。
         /// </summary>
-        private TimeSpan? _todayOffset;
+        private TimeSpan _todayOffset= TimeSpan.Zero;
 
         /// <summary>
         /// 本日を判断する時刻のオフセットを取得または設定します。
         /// </summary>
-        public TimeSpan? TodayOffset
+        public TimeSpan TodayOffset
         {
             get
             {

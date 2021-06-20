@@ -15,12 +15,9 @@ namespace WPFDatePicker.Converters
                 return DependencyProperty.UnsetValue;
             }
 
-            if (value is bool boolValue)
+            if ((value is bool boolValue) && (boolValue == true))
             {
-                if (boolValue == true)
-                {
-                    return new SolidColorBrush(Colors.DeepSkyBlue);
-                }
+                return new SolidColorBrush(Colors.DeepSkyBlue);
             }
 
             return SystemColors.ControlLightBrush;

@@ -4,6 +4,9 @@ using System.Runtime.CompilerServices;
 
 namespace WPFDatePicker.ViewModels
 {
+    /// <summary>
+    /// ViewModel の基底クラスを提供します。
+    /// </summary>
     public class BindableBase : INotifyPropertyChanged
     {
         #region INotifyPropertyChanged

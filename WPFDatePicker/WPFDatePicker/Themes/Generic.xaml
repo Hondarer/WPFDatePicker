@@ -12,7 +12,7 @@
     <conv:SelectedBackgroundConverter x:Key="SelectedBackgroundConverter" />
 
     <Style TargetType="{x:Type view:LastAndThisMonthDatePicker}">
-        <Setter Property="SelectedDate" Value="{Binding SelectedDate, Mode=TwoWay}" />
+        <Setter Property="SelectedDate" Value="{Binding SelectedDate, Mode=OneWay}" />
         <Setter Property="TodayOffset" Value="{Binding TodayOffset, Mode=OneWayToSource}" />
         <Setter Property="StartDateOffset" Value="{Binding StartDateOffset, Mode=OneWayToSource}" />
         <Setter Property="EndDateOffset" Value="{Binding EndDateOffset, Mode=OneWayToSource}" />

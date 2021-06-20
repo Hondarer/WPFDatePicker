@@ -10,7 +10,9 @@ namespace WPFDatePicker
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(System.Windows.Markup.XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
+            // フレームワークの言語を設定する。
+            FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement),
+                new FrameworkPropertyMetadata(System.Windows.Markup.XmlLanguage.GetLanguage(CultureInfo.CurrentUICulture.IetfLanguageTag)));
 
             base.OnStartup(e);
         }

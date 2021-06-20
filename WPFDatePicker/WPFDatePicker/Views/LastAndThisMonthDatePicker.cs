@@ -15,6 +15,8 @@ namespace WPFDatePicker.Views
     [TemplatePart(Name = "PART_todayButton", Type = typeof(Button))]
     public class LastAndThisMonthDatePicker : Control
     {
+        #region 依存関係プロパティ
+
         /// <summary>
         /// SelectedDate 依存関係プロパティを識別します。このフィールドは読み取り専用です。
         /// </summary>
@@ -22,7 +24,7 @@ namespace WPFDatePicker.Views
             DependencyProperty.Register(nameof(SelectedDate), typeof(DateTime), typeof(LastAndThisMonthDatePicker), new PropertyMetadata(default(DateTime)));
 
         /// <summary>
-        /// 選択された日付を取得または設定します。
+        /// 選択された日付を取得します。
         /// </summary>
         public DateTime SelectedDate
         {
@@ -30,7 +32,7 @@ namespace WPFDatePicker.Views
             {
                 return (DateTime)GetValue(SelectedDateProperty);
             }
-            set
+            internal set
             {
                 SetValue(SelectedDateProperty, value);
             }
@@ -40,10 +42,10 @@ namespace WPFDatePicker.Views
         /// TodayOffset 依存関係プロパティを識別します。このフィールドは読み取り専用です。
         /// </summary>
         public static readonly DependencyProperty TodayOffsetProperty =
-            DependencyProperty.Register(nameof(TodayOffset), typeof(TimeSpan?), typeof(LastAndThisMonthDatePicker), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(TodayOffset), typeof(TimeSpan?), typeof(LastAndThisMonthDatePicker), new PropertyMetadata(TimeSpan.Zero));
 
         /// <summary>
-        /// 本日を判断する時刻のオフセットを取得または設定します。
+        /// 本日を判断する時刻のオフセットを取得または設定します。規定値は <see cref="TimeSpan.Zero"/> です。
         /// </summary>
         public TimeSpan? TodayOffset
         {
@@ -64,7 +66,7 @@ namespace WPFDatePicker.Views
             DependencyProperty.Register(nameof(StartDateOffset), typeof(int), typeof(LastAndThisMonthDatePicker), new PropertyMetadata(-30));
 
         /// <summary>
-        /// 選択可能範囲の開始日のオフセットを取得または設定します。
+        /// 選択可能範囲の開始日のオフセットを取得または設定します。規定値は -30 です。
         /// </summary>
         public int StartDateOffset
         {
@@ -85,7 +87,7 @@ namespace WPFDatePicker.Views
             DependencyProperty.Register(nameof(EndDateOffset), typeof(int), typeof(LastAndThisMonthDatePicker), new PropertyMetadata(1));
 
         /// <summary>
-        /// 選択可能範囲の終了日のオフセットを取得または設定します。
+        /// 選択可能範囲の終了日のオフセットを取得または設定します。規定値は 1(明日)です。
         /// </summary>
         public int EndDateOffset
         {
@@ -106,7 +108,7 @@ namespace WPFDatePicker.Views
             DependencyProperty.Register(nameof(DefaultSelectDateOffset), typeof(int), typeof(LastAndThisMonthDatePicker), new PropertyMetadata(0));
 
         /// <summary>
-        /// 既定の選択日のオフセットを取得または設定します。
+        /// 既定の選択日のオフセットを取得または設定します。規定値は 0 です。
         /// </summary>
         public int DefaultSelectDateOffset
         {
@@ -119,6 +121,8 @@ namespace WPFDatePicker.Views
                 SetValue(DefaultSelectDateOffsetProperty, value);
             }
         }
+
+        #endregion
 
         /// <summary>
         /// <see cref="LastAndThisMonthDatePicker"/> クラスの静的な初期化をします。
