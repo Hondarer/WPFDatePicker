@@ -468,9 +468,9 @@ namespace WPFDatePicker.ViewModels
                parameter =>
                {
                    DateTime specifyDate;
-                   if (parameter is DateTime)
+                   if (parameter is DateTime time)
                    {
-                       specifyDate = (DateTime)parameter;
+                       specifyDate = time;
                    }
                    else
                    {
@@ -498,26 +498,17 @@ namespace WPFDatePicker.ViewModels
                    return true;
                });
 
-            DateTimeManager.Instance.CurrentDateTimeChanged += DateTimeManager_CurrentDateTimeChanged;
-
             InvalidateToday();
         }
 
-        private void DateTimeManager_CurrentDateTimeChanged(object sender, EventArgs e)
+        public void CurrentDateTimeChanged(object sender, EventArgs e)
         {
             InvalidateToday();
         }
 
         private void InvalidateToday()
         {
-            if (TodayOffset == null)
-            {
-                Today = DateTimeManager.Instance.CurrentDateTime.Date;
-            }
-            else
-            {
-                Today = DateTimeManager.Instance.CurrentDateTime.Add((TimeSpan)TodayOffset).Date;
-            }
+            Today = DateTimeManager.Instance.CurrentDateTime.Add(TodayOffset).Date;
         }
 
         private void RefreshDatesViewModel()

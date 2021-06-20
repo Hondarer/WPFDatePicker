@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
+using WPFDatePicker.ViewModels;
 
 namespace WPFDatePicker.Views
 {
@@ -124,6 +125,8 @@ namespace WPFDatePicker.Views
 
         #endregion
 
+        #region コンストラクター
+
         /// <summary>
         /// <see cref="LastAndThisMonthDatePicker"/> クラスの静的な初期化をします。
         /// </summary>
@@ -132,9 +135,19 @@ namespace WPFDatePicker.Views
             DefaultStyleKeyProperty.OverrideMetadata(typeof(LastAndThisMonthDatePicker), new FrameworkPropertyMetadata(typeof(LastAndThisMonthDatePicker)));
         }
 
+        #endregion
+
         /// <inheritdoc/>
         public override void OnApplyTemplate()
         {
+            // 部品の配置されたウインドウの Closed イベントを購読する
+            Window.GetWindow(this).Closed -= ParentWindow_Closed; // 複数回の呼び出しで購読が多重登録されないように
+            Window.GetWindow(this).Closed += ParentWindow_Closed;
+
+            // 時刻の変化イベントを購読する
+            DateTimeManager.Instance.CurrentDateTimeChanged -= DateTimeManager_CurrentDateTimeChanged; // 複数回の呼び出しで購読が多重登録されないように
+            DateTimeManager.Instance.CurrentDateTimeChanged += DateTimeManager_CurrentDateTimeChanged;
+
             // ポップアップを開いたときに、ポップアップ内の本日ボタンににフォーカスを移動する
             if (Template.FindName("PART_popup", this) is Popup part_popup)
             {
@@ -209,6 +222,24 @@ namespace WPFDatePicker.Views
             }
 
             base.OnApplyTemplate();
+        }
+
+        private void DateTimeManager_CurrentDateTimeChanged(object sender, EventArgs e)
+        {
+            if (DataContext is LastAndThisMonthDatePickerViewModel lastAndThisMonthDatePickerViewModel)
+            {
+                lastAndThisMonthDatePickerViewModel.CurrentDateTimeChanged(sender, e);
+            }
+        }
+
+        /// <summary>
+        /// Occurs when the window is about to close.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">An object that contains no event data.</param>
+        private void ParentWindow_Closed(object sender, EventArgs e)
+        {
+            DateTimeManager.Instance.CurrentDateTimeChanged -= DateTimeManager_CurrentDateTimeChanged;
         }
     }
 }
