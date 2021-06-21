@@ -12,9 +12,9 @@ namespace WPFDatePicker.ViewModels
     {
         public class DateViewModel : BindableBase
         {
-            public DateTime SpecifyDate { get; set; }
+            public string Description { get; set; }
 
-            public bool CanPick { get; set; } = true;
+            public DateTime SpecifyDate { get; set; }
 
             private bool _isSelected = false;
 
@@ -323,22 +323,7 @@ namespace WPFDatePicker.ViewModels
                 OnPropertyChanged(nameof(SelectedDate));
             }
 
-            foreach (object vm in LastMonthDays)
-            {
-                if (vm is DateViewModel dateViewModel)
-                {
-                    if (dateViewModel.SpecifyDate == _selectedDate)
-                    {
-                        dateViewModel.IsSelected = true;
-                    }
-                    else
-                    {
-                        dateViewModel.IsSelected = false;
-                    }
-                }
-            }
-
-            foreach (object vm in ThisMonthDays)
+            foreach (object vm in LastMonthDays.Union(ThisMonthDays).Union(Shortcuts))
             {
                 if (vm is DateViewModel dateViewModel)
                 {
@@ -433,6 +418,20 @@ namespace WPFDatePicker.ViewModels
             set
             {
                 SetProperty(ref _thisMonthDays, value);
+            }
+        }
+
+        private List<DateViewModel> _shortcuts;
+
+        public List<DateViewModel> Shortcuts
+        {
+            get
+            {
+                return _shortcuts;
+            }
+            set
+            {
+                SetProperty(ref _shortcuts, value);
             }
         }
 
@@ -551,11 +550,6 @@ namespace WPFDatePicker.ViewModels
             for (int day = 0; day < LastMonth1st.AddMonths(1).AddDays(-1).Day; day++)
             {
                 DateViewModel dateViewModel = new DateViewModel() { SpecifyDate = LastMonth1st.AddDays(day) };
-                if ((dateViewModel.SpecifyDate < StartDate) || (EndDate < dateViewModel.SpecifyDate))
-                {
-                    dateViewModel.CanPick = false;
-                }
-
                 _lastMonthDays.Add(dateViewModel);
             }
 
@@ -564,11 +558,6 @@ namespace WPFDatePicker.ViewModels
             for (int day = 0; day < ThisMonth1st.AddMonths(1).AddDays(-1).Day; day++)
             {
                 DateViewModel dateViewModel = new DateViewModel() { SpecifyDate = ThisMonth1st.AddDays(day) };
-                if ((dateViewModel.SpecifyDate < StartDate) || (EndDate < dateViewModel.SpecifyDate))
-                {
-                    dateViewModel.CanPick = false;
-                }
-
                 _thisMonthDays.Add(dateViewModel);
             }
 
@@ -623,14 +612,24 @@ namespace WPFDatePicker.ViewModels
 
             #endregion
 
-            // もし SelectedDate が選択範囲から逸脱していた場合には、選択日付を既定の日にする
+            List<DateViewModel> shortcuts = new List<DateViewModel>()
+            {
+                new DateViewModel(){SpecifyDate=Today.AddDays(1), Description=Resources.StringResource.Tomorrow },
+                new DateViewModel(){SpecifyDate=Today, Description=Resources.StringResource.Today },
+                new DateViewModel(){SpecifyDate=Today.AddDays(-1), Description=Resources.StringResource.Yesterday },
+                new DateViewModel(){SpecifyDate=Today.AddDays(-7), Description=Resources.StringResource.ThisDayLastWeek }
+            };
+
+            Shortcuts = shortcuts;
+
             if ((_selectedDate < StartDate) || (EndDate < _selectedDate))
             {
+                // もし SelectedDate が選択範囲から逸脱していた場合には、選択日付を既定の日にする
                 ChangeDateCore(Today.AddDays(DefaultSelectDateOffset));
             }
             else
             {
-                // 明日、当日、昨日、前週同曜日の再評価
+                // 選択状態の更新
                 ChangeDateCore(_selectedDate);
             }
 
