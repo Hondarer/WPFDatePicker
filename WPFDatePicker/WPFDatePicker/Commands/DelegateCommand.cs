@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Windows.Input;
-using WPFDatePicker.ViewModels;
 
 namespace WPFDatePicker.Commands
 {
-    public class DelegateCommand : BindableBase, ICommand
+    public class DelegateCommand : ICommand
     {
         private readonly Action<object> _execute;
 
@@ -40,21 +39,31 @@ namespace WPFDatePicker.Commands
             _execute(parameter);
         }
 
+        private EventHandler _canExecuteChanged;
+
         public event EventHandler CanExecuteChanged
         {
             add
             {
-                CommandManager.RequerySuggested += value;
+                _canExecuteChanged += value;
+                CommandManager.RequerySuggested -= CommandManager_RequerySuggested;
+                CommandManager.RequerySuggested += CommandManager_RequerySuggested;
             }
             remove
             {
-                CommandManager.RequerySuggested -= value;
+                _canExecuteChanged -= value;
+                CommandManager.RequerySuggested -= CommandManager_RequerySuggested;
             }
         }
 
-        public static void RaiseCanExecuteChanged()
+        private void CommandManager_RequerySuggested(object sender, EventArgs e)
         {
-            CommandManager.InvalidateRequerySuggested();
+            RaiseCanExecuteChanged();
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            _canExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }
