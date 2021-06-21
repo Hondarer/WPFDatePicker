@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -140,13 +141,17 @@ namespace WPFDatePicker.Views
         /// <inheritdoc/>
         public override void OnApplyTemplate()
         {
-            // 部品の配置されたウインドウの Closed イベントを購読する
-            Window.GetWindow(this).Closed -= ParentWindow_Closed; // 複数回の呼び出しで購読が多重登録されないように
-            Window.GetWindow(this).Closed += ParentWindow_Closed;
+            // デザイン時は以下の処理を行わない。
+            if (DesignerProperties.GetIsInDesignMode(this) == false)
+            {
+                // 部品の配置されたウインドウの Closed イベントを購読する
+                Window.GetWindow(this).Closed -= ParentWindow_Closed; // 複数回の呼び出しで購読が多重登録されないように
+                Window.GetWindow(this).Closed += ParentWindow_Closed;
 
-            // 時刻の変化イベントを購読する
-            DateTimeManager.Instance.CurrentDateTimeChanged -= DateTimeManager_CurrentDateTimeChanged; // 複数回の呼び出しで購読が多重登録されないように
-            DateTimeManager.Instance.CurrentDateTimeChanged += DateTimeManager_CurrentDateTimeChanged;
+                // 時刻の変化イベントを購読する
+                DateTimeManager.Instance.CurrentDateTimeChanged -= DateTimeManager_CurrentDateTimeChanged; // 複数回の呼び出しで購読が多重登録されないように
+                DateTimeManager.Instance.CurrentDateTimeChanged += DateTimeManager_CurrentDateTimeChanged;
+            }
 
             if (Template.FindName("PART_popup", this) is Popup part_popup)
             {
