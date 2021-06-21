@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace WPFDatePicker.ViewModels
@@ -30,7 +29,7 @@ namespace WPFDatePicker.ViewModels
         /// <returns>
         /// 値が変更された場合は <c>true</c>、既存の値が目的の値に一致した場合は <c>false</c> を返します。
         /// </returns>
-        protected virtual bool SetProperty<T>(ref T storage, T value, [CallerMemberName] String propertyName = null)
+        protected virtual bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
         {
             if (Equals(storage, value))
             {

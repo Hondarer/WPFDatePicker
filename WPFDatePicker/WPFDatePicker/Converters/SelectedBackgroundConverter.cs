@@ -10,7 +10,7 @@ namespace WPFDatePicker.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value == DependencyProperty.UnsetValue)
+            if (value == DependencyProperty.UnsetValue)
             {
                 return DependencyProperty.UnsetValue;
             }

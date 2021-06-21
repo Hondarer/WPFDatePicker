@@ -13,7 +13,7 @@ namespace WPFDatePicker.Views
     /// </summary>
     [TemplatePart(Name = "PART_selectedDateTextBox", Type = typeof(TextBox))]
     [TemplatePart(Name = "PART_popup", Type = typeof(Popup))]
-    [TemplatePart(Name = "PART_todayButton", Type = typeof(Button))]
+    [TemplatePart(Name = "PART_shortcutPanel", Type = typeof(Button))]
     public class LastAndThisMonthDatePicker : Control
     {
         #region 依存関係プロパティ
@@ -156,14 +156,14 @@ namespace WPFDatePicker.Views
                     return new CustomPopupPlacement[] { new CustomPopupPlacement() { Point = new Point(targetSize.Width - popupSize.Width, targetSize.Height) } };
                 };
 
-                // ポップアップを開いたときに、ポップアップ内の本日ボタンににフォーカスを移動する
+                // ポップアップを開いたときに、ポップアップ内ににフォーカスを移動する
                 part_popup.Opened += (sender, e) =>
                 {
                     if (sender is Popup popup)
                     {
-                        if (Template.FindName("PART_todayButton", this) is Button part_todayButton)
+                        if (Template.FindName("PART_shortcutPanel", this) is UIElement uiElement)
                         {
-                            part_todayButton.Focus();
+                            uiElement.Focus();
                         }
                     }
                 };

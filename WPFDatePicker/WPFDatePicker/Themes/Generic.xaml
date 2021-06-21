@@ -31,7 +31,7 @@
                         <StackPanel Orientation="Horizontal" Height="24">
                             
                             <Grid>
-                                <TextBox x:Name="PART_selectedDateTextBox" Width="160" Text="{Binding SelectedDateString}" VerticalContentAlignment="Center">
+                                <TextBox x:Name="PART_selectedDateTextBox" Width="200" Text="{Binding SelectedDateString}" VerticalContentAlignment="Center">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="GotFocus">
                                             <action:SetProperty PropertyName="Visibility" Value="Collapsed" TargetObject="{Binding ElementName=PART_selectedDateDayOfWeek}" />
@@ -42,7 +42,7 @@
                                     </i:Interaction.Triggers>
                                 </TextBox>
                                 <TextBlock x:Name="PART_selectedDateDayOfWeek" Text="{Binding SelectedDateDayOfWeek}"
-                                           HorizontalAlignment="Right" VerticalAlignment="Center" IsHitTestVisible="False" Width="94" />
+                                           HorizontalAlignment="Right" VerticalAlignment="Center" IsHitTestVisible="False" Width="114" />
                             </Grid>
 
                             <Button x:Name="PART_popupButton" Content="&#xE787;" FontFamily="Segoe MDL2 Assets" Padding="4,0">
@@ -127,7 +127,7 @@
                                             </ItemsControl>
                                         </StackPanel>
 
-                                        <ItemsControl ItemsSource="{Binding Shortcuts}"
+                                        <ItemsControl ItemsSource="{Binding Shortcuts}" x:Name="PART_shortcutPanel"
                                                       ItemTemplate="{StaticResource ShortButtonTemplate}" Grid.Column="2" Margin="4">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
