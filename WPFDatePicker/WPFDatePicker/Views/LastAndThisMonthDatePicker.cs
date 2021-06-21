@@ -148,9 +148,15 @@ namespace WPFDatePicker.Views
             DateTimeManager.Instance.CurrentDateTimeChanged -= DateTimeManager_CurrentDateTimeChanged; // 複数回の呼び出しで購読が多重登録されないように
             DateTimeManager.Instance.CurrentDateTimeChanged += DateTimeManager_CurrentDateTimeChanged;
 
-            // ポップアップを開いたときに、ポップアップ内の本日ボタンににフォーカスを移動する
             if (Template.FindName("PART_popup", this) is Popup part_popup)
             {
+                // ポップアップの位置を、起点オブジェクトの右下基準にする
+                part_popup.CustomPopupPlacementCallback += (Size popupSize, Size targetSize, Point offset) =>
+                {
+                    return new CustomPopupPlacement[] { new CustomPopupPlacement() { Point = new Point(targetSize.Width - popupSize.Width, targetSize.Height) } };
+                };
+
+                // ポップアップを開いたときに、ポップアップ内の本日ボタンににフォーカスを移動する
                 part_popup.Opened += (sender, e) =>
                 {
                     if (sender is Popup popup)
