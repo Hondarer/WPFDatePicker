@@ -72,7 +72,7 @@
                                         </Button>
                                     </DataTemplate>
 
-                                    <DataTemplate x:Key="ShortButtonTemplate">
+                                    <DataTemplate x:Key="ShortcutButtonTemplate">
                                         <Button HorizontalContentAlignment="Center" Padding="4" Margin="4"
                                                 Command="{Binding DataContext.SpecifyDateCommamnd, RelativeSource={RelativeSource FindAncestor, AncestorType=Popup}}"
                                                 CommandParameter="{Binding SpecifyDate}"
@@ -128,7 +128,7 @@
                                         </StackPanel>
 
                                         <ItemsControl ItemsSource="{Binding Shortcuts}" x:Name="PART_shortcutPanel"
-                                                      ItemTemplate="{StaticResource ShortButtonTemplate}" Grid.Column="2" Margin="4">
+                                                      ItemTemplate="{StaticResource ShortcutButtonTemplate}" Grid.Column="2" Margin="4">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
                                                     <StackPanel />
