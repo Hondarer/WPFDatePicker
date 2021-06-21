@@ -107,7 +107,7 @@ namespace WPFDatePicker.ViewModels
         /// <summary>
         /// 本日を判断する時刻のオフセットを保持します。
         /// </summary>
-        private TimeSpan _todayOffset= TimeSpan.Zero;
+        private TimeSpan _todayOffset = TimeSpan.Zero;
 
         /// <summary>
         /// 本日を判断する時刻のオフセットを取得または設定します。
@@ -198,7 +198,16 @@ namespace WPFDatePicker.ViewModels
 
         private DateTime _selectedDate;
 
-        public string SelectedDate
+        public DateTime SelectedDate
+
+        {
+            get
+            {
+                return _selectedDate;
+            }
+        }
+
+        public string SelectedDateString
         {
             get
             {
@@ -237,77 +246,13 @@ namespace WPFDatePicker.ViewModels
                 StringBuilder sb = new StringBuilder();
                 sb.Append($"{_selectedDate:(ddd)}");
 
-                if (IsTomorrow)
+                DateViewModel selectedShortcut = Shortcuts.Where(s => s.IsSelected).FirstOrDefault();
+                if (selectedShortcut != null)
                 {
-                    sb.Append($" {Resources.StringResource.Tomorrow}");
-                }
-                else if (IsToday)
-                {
-                    sb.Append($" {Resources.StringResource.Today}");
-                }
-                else if (IsYesterday)
-                {
-                    sb.Append($" {Resources.StringResource.Yesterday}");
-                }
-                else if (IsThisDayLastWeek)
-                {
-                    sb.Append($" {Resources.StringResource.ThisDayLastWeek}");
-                }
-                else
-                {
-                    // NOP
+                    sb.Append($" {selectedShortcut.Description}");
                 }
 
                 return sb.ToString();
-            }
-        }
-
-        private bool _isTomorrow;
-        public bool IsTomorrow
-        {
-            get
-            {
-                return _isTomorrow;
-            }
-            private set
-            {
-                SetProperty(ref _isTomorrow, value);
-            }
-        }
-        private bool _isToday;
-        public bool IsToday
-        {
-            get
-            {
-                return _isToday;
-            }
-            private set
-            {
-                SetProperty(ref _isToday, value);
-            }
-        }
-        private bool _isYesterday;
-        public bool IsYesterday
-        {
-            get
-            {
-                return _isYesterday;
-            }
-            private set
-            {
-                SetProperty(ref _isYesterday, value);
-            }
-        }
-        private bool _isThisDayLastWeek;
-        public bool IsThisDayLastWeek
-        {
-            get
-            {
-                return _isThisDayLastWeek;
-            }
-            private set
-            {
-                SetProperty(ref _isThisDayLastWeek, value);
             }
         }
 
@@ -321,6 +266,7 @@ namespace WPFDatePicker.ViewModels
                 _selectedDate = specifyDate;
 
                 OnPropertyChanged(nameof(SelectedDate));
+                OnPropertyChanged(nameof(SelectedDateString));
             }
 
             foreach (object vm in LastMonthDays.Union(ThisMonthDays).Union(Shortcuts))
@@ -336,42 +282,6 @@ namespace WPFDatePicker.ViewModels
                         dateViewModel.IsSelected = false;
                     }
                 }
-            }
-
-            if (_selectedDate == Today.AddDays(1))
-            {
-                IsTomorrow = true;
-                IsToday = false;
-                IsYesterday = false;
-                IsThisDayLastWeek = false;
-            }
-            else if (_selectedDate == Today)
-            {
-                IsTomorrow = false;
-                IsToday = true;
-                IsYesterday = false;
-                IsThisDayLastWeek = false;
-            }
-            else if (_selectedDate == Today.AddDays(-1))
-            {
-                IsTomorrow = false;
-                IsToday = false;
-                IsYesterday = true;
-                IsThisDayLastWeek = false;
-            }
-            else if (_selectedDate == Today.AddDays(-7))
-            {
-                IsTomorrow = false;
-                IsToday = false;
-                IsYesterday = false;
-                IsThisDayLastWeek = true;
-            }
-            else
-            {
-                IsTomorrow = false;
-                IsToday = false;
-                IsYesterday = false;
-                IsThisDayLastWeek = false;
             }
 
             OnPropertyChanged(nameof(SelectedDateDayOfWeek));
@@ -393,9 +303,9 @@ namespace WPFDatePicker.ViewModels
 
         public DelegateCommand SpecifyDateCommamnd { get; }
 
-        private List<object> _lastMonthDays;
+        private List<DateViewModel> _lastMonthDays;
 
-        public List<object> LastMonthDays
+        public List<DateViewModel> LastMonthDays
         {
             get
             {
@@ -407,9 +317,9 @@ namespace WPFDatePicker.ViewModels
             }
         }
 
-        private List<object> _thisMonthDays;
+        private List<DateViewModel> _thisMonthDays;
 
-        public List<object> ThisMonthDays
+        public List<DateViewModel> ThisMonthDays
         {
             get
             {
@@ -542,8 +452,8 @@ namespace WPFDatePicker.ViewModels
 
             #region カレンダーの作成
 
-            List<object> _lastMonthDays = new List<object>();
-            List<object> _thisMonthDays = new List<object>();
+            List<DateViewModel> _lastMonthDays = new List<DateViewModel>();
+            List<DateViewModel> _thisMonthDays = new List<DateViewModel>();
 
             // 先月のカレンダー作成
 
@@ -588,7 +498,7 @@ namespace WPFDatePicker.ViewModels
             // カレンダー上の開始曜日の調整
 
             // 先月
-            int lastMonthCalenderDayOfWeek = (int)((DateViewModel)_lastMonthDays.First()).SpecifyDate.DayOfWeek;
+            int lastMonthCalenderDayOfWeek = (int)_lastMonthDays.First().SpecifyDate.DayOfWeek;
             for (int dayOfWeek = 0; dayOfWeek < lastMonthCalenderDayOfWeek; dayOfWeek++) // 日曜 = 0
             {
                 _lastMonthDays.Insert(0, null);
@@ -603,14 +513,16 @@ namespace WPFDatePicker.ViewModels
             // 曜日ラベルの追加
             for (int dayOfWeek = (int)DayOfWeek.Saturday; dayOfWeek >= (int)DayOfWeek.Sunday; dayOfWeek--)
             {
-                _lastMonthDays.Insert(0, CultureInfo.CurrentUICulture.DateTimeFormat.GetShortestDayName((DayOfWeek)dayOfWeek));
-                _thisMonthDays.Insert(0, CultureInfo.CurrentUICulture.DateTimeFormat.GetShortestDayName((DayOfWeek)dayOfWeek));
+                _lastMonthDays.Insert(0, new DateViewModel() { Description = CultureInfo.CurrentUICulture.DateTimeFormat.GetShortestDayName((DayOfWeek)dayOfWeek) });
+                _thisMonthDays.Insert(0, new DateViewModel() { Description = CultureInfo.CurrentUICulture.DateTimeFormat.GetShortestDayName((DayOfWeek)dayOfWeek) });
             }
 
             LastMonthDays = _lastMonthDays;
             ThisMonthDays = _thisMonthDays;
 
             #endregion
+
+            #region ショートカットの作成
 
             List<DateViewModel> shortcuts = new List<DateViewModel>()
             {
@@ -621,6 +533,8 @@ namespace WPFDatePicker.ViewModels
             };
 
             Shortcuts = shortcuts;
+
+            #endregion
 
             if ((_selectedDate < StartDate) || (EndDate < _selectedDate))
             {

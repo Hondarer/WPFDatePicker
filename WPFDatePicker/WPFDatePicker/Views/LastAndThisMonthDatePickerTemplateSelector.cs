@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
+using WPFDatePicker.ViewModels;
 
 namespace WPFDatePicker.Views
 {
@@ -26,20 +28,22 @@ namespace WPFDatePicker.Views
         /// <inheritdoc/>
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
+            if (item is LastAndThisMonthDatePickerViewModel.DateViewModel dateViewModel)
+            {
+                if (dateViewModel.SpecifyDate == default(DateTime))
+                {
+                    // 日付が未指定のときは、ラベルのテンプレートを返す。
+                    return LabelTemplate;
+                }
+                else
+                {
+                    // 日付選択ボタンのテンプレートを返す。
+                    return PickButtonTemplate;
+                }
+            }
+
             // null のときは、空白のテンプレートを返す。
-            if (item == null)
-            {
-                return FillerTemplate;
-            }
-
-            // string のときは、ラベルのテンプレートを返す。
-            if (item is string)
-            {
-                return LabelTemplate;
-            }
-
-            // 日付選択ボタンのテンプレートを返す。
-            return PickButtonTemplate;
+            return FillerTemplate;
         }
     }
 }

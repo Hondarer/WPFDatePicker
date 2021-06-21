@@ -31,7 +31,7 @@
                         <StackPanel Orientation="Horizontal" Height="24">
                             
                             <Grid>
-                                <TextBox x:Name="PART_selectedDateTextBox" Width="160" Text="{Binding SelectedDate}" VerticalContentAlignment="Center">
+                                <TextBox x:Name="PART_selectedDateTextBox" Width="160" Text="{Binding SelectedDateString}" VerticalContentAlignment="Center">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="GotFocus">
                                             <action:SetProperty PropertyName="Visibility" Value="Collapsed" TargetObject="{Binding ElementName=PART_selectedDateDayOfWeek}" />
@@ -60,7 +60,7 @@
                                     <DataTemplate x:Key="FillerTemplate" />
                                     
                                     <DataTemplate x:Key="LabelTemplate">
-                                        <TextBlock Text="{Binding}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="{Binding Description}" HorizontalAlignment="Center" />
                                     </DataTemplate>
                                     
                                     <DataTemplate x:Key="PickButtonTemplate">
