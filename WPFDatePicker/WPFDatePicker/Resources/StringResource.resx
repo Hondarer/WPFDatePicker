@@ -127,7 +127,7 @@
     <value>本日</value>
   </data>
   <data name="Tomorrow" xml:space="preserve">
-    <value>明日</value>
+    <value>翌日</value>
   </data>
   <data name="Yesterday" xml:space="preserve">
     <value>昨日</value>

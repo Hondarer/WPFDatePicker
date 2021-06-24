@@ -88,7 +88,7 @@ namespace WPFDatePicker.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 明日.
+        ///   Looks up a localized string similar to 翌日.
         /// </summary>
         public static string Tomorrow {
             get {
