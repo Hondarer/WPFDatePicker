@@ -14,7 +14,7 @@ namespace WPFDatePicker.Views
     /// </summary>
     [TemplatePart(Name = "PART_selectedDateTextBox", Type = typeof(TextBox))]
     [TemplatePart(Name = "PART_popup", Type = typeof(Popup))]
-    [TemplatePart(Name = "PART_shortcutPanel", Type = typeof(Button))]
+    [TemplatePart(Name = "PART_shortcutPanel", Type = typeof(UIElement))]
     public class LastAndThisMonthDatePicker : Control
     {
         #region 依存関係プロパティ
@@ -161,7 +161,7 @@ namespace WPFDatePicker.Views
                     return new CustomPopupPlacement[] { new CustomPopupPlacement() { Point = new Point(targetSize.Width - popupSize.Width, targetSize.Height) } };
                 };
 
-                // ポップアップを開いたときに、ポップアップ内ににフォーカスを移動する
+                // ポップアップを開いたときに、ポップアップ内にフォーカスを移動する
                 part_popup.Opened += (sender, e) =>
                 {
                     if (sender is Popup popup)
@@ -178,7 +178,9 @@ namespace WPFDatePicker.Views
             {
                 #region フォーカスを得たときに全選択する
 
-                // MEMO: Popup を開いた状態で TextBox にフォーカスを与えると全選択されない。詳細メカニズム未調査。機能に支障がないため、現状通りとしたい。
+                // MEMO: Popup を開いた状態で TextBox にフォーカスを与えると全選択されない。
+                //       このとき、PreviewMouseLeftButtonDown が呼ばれないためだが、詳細メカニズム未調査。
+                //       機能に支障がないため、現状通りとしたい。
 
                 part_selectedDateTextBox.MouseDoubleClick += (sender, e) =>
                 {
@@ -221,7 +223,7 @@ namespace WPFDatePicker.Views
                     BindingExpression be = ((TextBox)sender).GetBindingExpression(TextBox.TextProperty);
                     be.UpdateSource();
 
-                    // 曜日表示を行いたいので、フォーカスを移動する
+                    // フォーカスを移動する
                     TraversalRequest request = new TraversalRequest(FocusNavigationDirection.Previous)
                     {
                         Wrapped = true

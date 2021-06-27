@@ -63,9 +63,9 @@ namespace WPFDatePicker.Resources {
         /// <summary>
         ///   Looks up a localized string similar to yyyy/MM/dd,yy/MM/dd,MM/dd,yyyyMMdd,yyMMdd,MMdd.
         /// </summary>
-        public static string DateParseFormats {
+        public static string LastAndThisMonthDatePicker_DateParseFormats {
             get {
-                return ResourceManager.GetString("DateParseFormats", resourceCulture);
+                return ResourceManager.GetString("LastAndThisMonthDatePicker_DateParseFormats", resourceCulture);
             }
         }
         

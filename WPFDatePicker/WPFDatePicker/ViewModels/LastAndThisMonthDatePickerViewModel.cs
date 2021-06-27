@@ -205,19 +205,26 @@ namespace WPFDatePicker.ViewModels
             {
                 return _selectedDate;
             }
+            set
+            {
+                if(SetProperty(ref _selectedDate, value)==true)
+                {
+                    OnPropertyChanged(nameof(SelectedDateString));
+                }
+            }
         }
 
         public string SelectedDateString
         {
             get
             {
-                return string.Format("{0:yyyy/MM/dd}", _selectedDate);
+                return string.Format("{0:yyyy/MM/dd}", SelectedDate);
             }
             set
             {
-                // 入力された文字列を日付として評価する
+                // 入力された文字列を DateTime として評価する
                 if (DateTime.TryParseExact(value,
-                    Resources.StringResource.DateParseFormats.Split(','),
+                    Resources.StringResource.LastAndThisMonthDatePicker_DateParseFormats.Split(','),
                     CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime parsedDateTime) == false)
                 {
                     // 無効な値の場合にはソースを更新しない
@@ -239,12 +246,12 @@ namespace WPFDatePicker.ViewModels
             }
         }
 
-        public string SelectedDateDayOfWeek
+        public string SelectedDateFullString
         {
             get
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append($"{_selectedDate:(ddd)}");
+                sb.Append($"{SelectedDate:yyyy/MM/dd(ddd)}");
 
                 DateViewModel selectedShortcut = Shortcuts.Where(s => s.IsSelected).FirstOrDefault();
                 if (selectedShortcut != null)
@@ -259,21 +266,13 @@ namespace WPFDatePicker.ViewModels
         private void ChangeDateCore(DateTime specifyDate)
         {
             // 日付以下の情報があれば削除する
-            specifyDate = specifyDate.Date;
-
-            if (_selectedDate != specifyDate)
-            {
-                _selectedDate = specifyDate;
-
-                OnPropertyChanged(nameof(SelectedDate));
-                OnPropertyChanged(nameof(SelectedDateString));
-            }
+            SelectedDate = specifyDate.Date;
 
             foreach (object vm in LastMonthDays.Union(ThisMonthDays).Union(Shortcuts))
             {
                 if (vm is DateViewModel dateViewModel)
                 {
-                    if (dateViewModel.SpecifyDate == _selectedDate)
+                    if (dateViewModel.SpecifyDate == SelectedDate)
                     {
                         dateViewModel.IsSelected = true;
                     }
@@ -284,7 +283,7 @@ namespace WPFDatePicker.ViewModels
                 }
             }
 
-            OnPropertyChanged(nameof(SelectedDateDayOfWeek));
+            OnPropertyChanged(nameof(SelectedDateFullString));
         }
 
         private bool _popupOpen;
@@ -536,7 +535,7 @@ namespace WPFDatePicker.ViewModels
 
             #endregion
 
-            if ((_selectedDate < StartDate) || (EndDate < _selectedDate))
+            if ((SelectedDate < StartDate) || (EndDate < SelectedDate))
             {
                 // もし SelectedDate が選択範囲から逸脱していた場合には、選択日付を既定の日にする
                 ChangeDateCore(Today.AddDays(DefaultSelectDateOffset));
@@ -544,7 +543,7 @@ namespace WPFDatePicker.ViewModels
             else
             {
                 // 選択状態の更新
-                ChangeDateCore(_selectedDate);
+                ChangeDateCore(SelectedDate);
             }
 
             // コマンドの実行可否再評価を依頼

@@ -31,18 +31,20 @@
                         <StackPanel Orientation="Horizontal" Height="24">
                             
                             <Grid>
-                                <TextBox x:Name="PART_selectedDateTextBox" Width="200" Text="{Binding SelectedDateString}" VerticalContentAlignment="Center">
+                                <TextBox x:Name="PART_selectedDateTextBox" Width="200" Foreground="{x:Null}" Text="{Binding SelectedDateString}" VerticalContentAlignment="Center">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="GotFocus">
                                             <action:SetProperty PropertyName="Visibility" Value="Collapsed" TargetObject="{Binding ElementName=PART_selectedDateDayOfWeek}" />
+                                            <action:SetProperty PropertyName="Foreground" Value="Black" />
                                         </i:EventTrigger>
                                         <i:EventTrigger EventName="LostFocus">
                                             <action:SetProperty PropertyName="Visibility" Value="Visible" TargetObject="{Binding ElementName=PART_selectedDateDayOfWeek}" />
+                                            <action:SetProperty PropertyName="Foreground" Value="{x:Null}" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </TextBox>
-                                <TextBlock x:Name="PART_selectedDateDayOfWeek" Text="{Binding SelectedDateDayOfWeek}"
-                                           HorizontalAlignment="Right" VerticalAlignment="Center" IsHitTestVisible="False" Width="114" />
+                                <TextBlock x:Name="PART_selectedDateDayOfWeek" Text="{Binding SelectedDateFullString}"
+                                           Margin="3,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False" />
                             </Grid>
 
                             <Button x:Name="PART_popupButton" Content="&#xE787;" FontFamily="Segoe MDL2 Assets" Padding="4,0">
@@ -143,7 +145,6 @@
                             </Popup>
                             
                         </StackPanel>
-                        
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
