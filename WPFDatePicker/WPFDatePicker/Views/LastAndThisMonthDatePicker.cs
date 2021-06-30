@@ -237,7 +237,7 @@ namespace WPFDatePicker.Views
             base.OnApplyTemplate();
         }
 
-        private void DateTimeManager_CurrentDateTimeChanged(object sender, EventArgs e)
+        private void DateTimeManager_CurrentDateTimeChanged(object sender, CurrentDateTimeChangedEventArgs e)
         {
             if (DataContext is LastAndThisMonthDatePickerViewModel lastAndThisMonthDatePickerViewModel)
             {

@@ -191,7 +191,7 @@ namespace WPFDatePicker.ViewModels
             {
                 if (SetProperty(ref _defaultSelectDateOffset, value) == true)
                 {
-                    ChangeDateCore(Today.AddDays(DefaultSelectDateOffset));
+                    ChangeSelectedDateCore(Today.AddDays(DefaultSelectDateOffset));
                 }
             }
         }
@@ -228,7 +228,7 @@ namespace WPFDatePicker.ViewModels
                     CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime parsedDateTime) == false)
                 {
                     // 無効な値の場合にはソースを更新しない
-                    // View を元の値に戻すために、PropertyChanged を発行する
+                    // View を元の値に戻すために、PropertyChanged イベントを発行する
                     OnPropertyChanged();
                     return;
                 }
@@ -237,12 +237,12 @@ namespace WPFDatePicker.ViewModels
                 if ((parsedDateTime < StartDate) || (EndDate < parsedDateTime))
                 {
                     // 無効な値の場合にはソースを更新しない
-                    // View を元の値に戻すために、PropertyChanged を発行する
+                    // View を元の値に戻すために、PropertyChanged イベントを発行する
                     OnPropertyChanged();
                     return;
                 }
 
-                ChangeDateCore(parsedDateTime);
+                ChangeSelectedDateCore(parsedDateTime);
             }
         }
 
@@ -263,7 +263,7 @@ namespace WPFDatePicker.ViewModels
             }
         }
 
-        private void ChangeDateCore(DateTime specifyDate)
+        private void ChangeSelectedDateCore(DateTime specifyDate)
         {
             // 日付以下の情報があれば削除する
             SelectedDate = specifyDate.Date;
@@ -351,7 +351,7 @@ namespace WPFDatePicker.ViewModels
                {
                    if (parameter is DateTime specifyDate)
                    {
-                       ChangeDateCore(specifyDate);
+                       ChangeSelectedDateCore(specifyDate);
                    }
                    else
                    {
@@ -367,7 +367,7 @@ namespace WPFDatePicker.ViewModels
                                // NOP
                            }
                        }
-                       ChangeDateCore(Today.AddDays(offsetDay));
+                       ChangeSelectedDateCore(Today.AddDays(offsetDay));
                    }
 
                    // ポップアップを閉じる
@@ -416,7 +416,7 @@ namespace WPFDatePicker.ViewModels
 
         private void InvalidateToday()
         {
-            Today = DateTimeManager.Instance.CurrentDateTime.Add(TodayOffset).Date;
+            Today = DateTimeManager.Instance.CurrentDateTime.Add(TodayOffset);
         }
 
         private void RefreshDatesViewModel()
@@ -538,12 +538,12 @@ namespace WPFDatePicker.ViewModels
             if ((SelectedDate < StartDate) || (EndDate < SelectedDate))
             {
                 // もし SelectedDate が選択範囲から逸脱していた場合には、選択日付を既定の日にする
-                ChangeDateCore(Today.AddDays(DefaultSelectDateOffset));
+                ChangeSelectedDateCore(Today.AddDays(DefaultSelectDateOffset));
             }
             else
             {
                 // 選択状態の更新
-                ChangeDateCore(SelectedDate);
+                ChangeSelectedDateCore(SelectedDate);
             }
 
             // コマンドの実行可否再評価を依頼

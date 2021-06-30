@@ -4,9 +4,19 @@ using WPFDatePicker.Commands;
 
 namespace WPFDatePicker.ViewModels
 {
+    public class CurrentDateTimeChangedEventArgs : EventArgs
+    {
+        public DateTime CurrentDateTime { get; }
+
+        public CurrentDateTimeChangedEventArgs(DateTime currentDateTime)
+        {
+            CurrentDateTime = currentDateTime;
+        }
+    }
+
     public class DateTimeManager : BindableBase
     {
-        public event EventHandler CurrentDateTimeChanged;
+        public event EventHandler<CurrentDateTimeChangedEventArgs> CurrentDateTimeChanged;
 
         private static readonly DateTimeManager s_instance = new DateTimeManager();
 
@@ -32,7 +42,7 @@ namespace WPFDatePicker.ViewModels
             {
                 if (SetProperty(ref _currentDateTime, value) == true)
                 {
-                    CurrentDateTimeChanged?.Invoke(this, EventArgs.Empty);
+                    CurrentDateTimeChanged?.Invoke(this, new CurrentDateTimeChangedEventArgs(_currentDateTime));
                 }
             }
         }
