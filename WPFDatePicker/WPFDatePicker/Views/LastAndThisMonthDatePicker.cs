@@ -44,16 +44,16 @@ namespace WPFDatePicker.Views
         /// TodayOffset 依存関係プロパティを識別します。このフィールドは読み取り専用です。
         /// </summary>
         public static readonly DependencyProperty TodayOffsetProperty =
-            DependencyProperty.Register(nameof(TodayOffset), typeof(TimeSpan?), typeof(LastAndThisMonthDatePicker), new PropertyMetadata(TimeSpan.Zero));
+            DependencyProperty.Register(nameof(TodayOffset), typeof(TimeSpan), typeof(LastAndThisMonthDatePicker), new PropertyMetadata(TimeSpan.Zero));
 
         /// <summary>
-        /// 本日を判断する時刻のオフセットを取得または設定します。規定値は <see cref="TimeSpan.Zero"/> です。
+        /// 本日を判断するオフセットを取得または設定します。規定値は <see cref="TimeSpan.Zero"/> です。
         /// </summary>
-        public TimeSpan? TodayOffset
+        public TimeSpan TodayOffset
         {
             get
             {
-                return (TimeSpan?)GetValue(TodayOffsetProperty);
+                return (TimeSpan)GetValue(TodayOffsetProperty);
             }
             set
             {
